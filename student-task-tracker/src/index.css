@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+  
+  /* Premium Dark Mode Specs from IMG_1259 */
+  --color-bg-pure: #090C11;          /* Ultimate pitch black base */
+  --color-card-dark: #121318;        /* Matte dark grey for containers */
+  --color-border-subtle: #1F222A;    /* Crisp, clean separator lines */
+  --color-text-main: #FFFFFF;        /* High contrast headers */
+  --color-text-muted: #7E8494;       /* Balanced secondary gray text */
+  
+  /* Interactive Accent */
+  --color-interactive-blue: #00E5FF; /* Vibrant electric cyan/blue for hovers */
+}
+
+@layer base {
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #090C11 !important;
+    color: #FFFFFF !important;
+    -webkit-font-smoothing: antialiased;
+  }
+}
