@@ -9,11 +9,12 @@ src/
 └── components/
     ├── authentication/
     │   ├── login/
-    │   │   ├── Login.tsx
-    │   │   ├── Login.styles.ts
+    │   │   ├── login.tsx
+    │   │   ├── login.styles.ts
     │   │   └── index.ts
     │   └── signup/
     └── common/
-        ├── Button/
-        └── Navbar/
+        ├── button/
+        └── bavbar/
 ```
+Make sure your projects folders and files are in small letters NOT capital letters 
