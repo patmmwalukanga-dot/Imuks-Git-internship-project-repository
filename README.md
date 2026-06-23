@@ -1,14 +1,13 @@
+```text
 src/
 └── components/
-    ├── authentication/        # Feature-based grouping
-    │   ├── login/             # Specific component folder
+    ├── authentication/
+    │   ├── login/
     │   │   ├── Login.tsx
     │   │   ├── Login.styles.ts
     │   │   └── index.ts
     │   └── signup/
-    │       └── ...
-    ├── common/                # Shared UI elements (buttons, inputs)
-    │   ├── Button/
-    │   └── Navbar/
-    └── dashboard/
-        └── ...
+    └── common/
+        ├── Button/
+        └── Navbar/
+```
