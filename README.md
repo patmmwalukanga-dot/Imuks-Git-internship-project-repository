@@ -1,6 +1,6 @@
-⚠️ Project Structure Policy
+⚠️ Project Structure 
 ---
-To maintain a clean and scalable codebase, please follow the folder structure below. All Pull Requests that do not adhere to this structure will be rejected. We are committed to avoiding a confusing or messy project history.
+To maintain a clean and scalable codebase, please follow the folder structure below. All Pull Requests that do not adhere to this structure will be rejected. to avoiding a confusing or messy project history.
 ---
 
 
