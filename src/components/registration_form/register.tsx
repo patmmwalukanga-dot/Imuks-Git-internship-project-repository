@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 
 // ============================================
 // TYPES
@@ -26,11 +26,24 @@ interface RegistrationEntry {
 }
 
 // ============================================
+// HELPERS
+// ============================================
+const getSavedEntries = (): RegistrationEntry[] => {
+  try {
+    if (typeof window === 'undefined') return [];
+    const saved = localStorage.getItem('registrationEntries');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
+// ============================================
 // MAIN COMPONENT
 // ============================================
 export default function Home() {
   // ===== STATE =====
-  const [entries, setEntries] = useState<RegistrationEntry[]>([]);
+  const [entries, setEntries] = useState<RegistrationEntry[]>(() => getSavedEntries());
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -53,52 +66,29 @@ export default function Home() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [stats, setStats] = useState({
-    total: 0,
-    students: 0,
-    staff: 0,
-    active: 0,
-    pending: 0
-  });
 
-  // Use ref to track if this is the first render
-  const isFirstRender = useRef(true);
+  // Derive stats from entries — no setState needed
+  const stats = useMemo(() => ({
+    total: entries.length,
+    students: entries.filter(e => e.type === 'student').length,
+    staff: entries.filter(e => e.type === 'staff').length,
+    active: entries.filter(e => e.status === 'active').length,
+    pending: entries.filter(e => e.status === 'pending').length,
+  }), [entries]);
 
-  // ===== STATS - Moved BEFORE useEffect =====
-  const updateStats = useCallback((data: RegistrationEntry[]) => {
-    setStats({
-      total: data.length,
-      students: data.filter(e => e.type === 'student').length,
-      staff: data.filter(e => e.type === 'staff').length,
-      active: data.filter(e => e.status === 'active').length,
-      pending: data.filter(e => e.status === 'pending').length
-    });
-  }, []);
+  // Stable ID generator: base timestamp recorded once + incrementing counter
+  const idBaseRef = useRef<number>(Date.now());
+  const idCounterRef = useRef(0);
 
   // ===== EFFECTS =====
-  // Load from localStorage on mount only
+  // Keep localStorage in sync whenever entries change
   useEffect(() => {
-    const savedEntries = localStorage.getItem('registrationEntries');
-    if (savedEntries) {
-      try {
-        const parsed = JSON.parse(savedEntries);
-        setEntries(parsed);
-        // Update stats after setting entries
-        updateStats(parsed);
-      } catch (error) {
-        console.error('Failed to load entries:', error);
-      }
-    }
-    isFirstRender.current = false;
-  }, [updateStats]);
-
-  // Save to localStorage and update stats when entries change (but not on first render)
-  useEffect(() => {
-    if (!isFirstRender.current) {
+    try {
       localStorage.setItem('registrationEntries', JSON.stringify(entries));
-      updateStats(entries);
+    } catch (err) {
+      console.error('Failed to save entries:', err);
     }
-  }, [entries, updateStats]);
+  }, [entries]);
 
   // ===== VALIDATION =====
   const validateForm = () => {
@@ -184,10 +174,8 @@ export default function Home() {
       alert('Entry updated successfully!');
       setEditingId(null);
     } else {
-      // Generate ID using a combination of timestamp and random for uniqueness
-      const timestamp = performance.now();
-      const random = Math.random().toString(36).substring(2, 9);
-      const id = `entry_${timestamp}_${random}`;
+      // Generate ID using stable base timestamp + counter (no Math.random)
+      const id = `entry_${idBaseRef.current}_${idCounterRef.current++}`;
       
       const newEntry: RegistrationEntry = {
         ...formData,
