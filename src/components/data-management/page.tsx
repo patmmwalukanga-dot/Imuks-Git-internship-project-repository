@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import styled from 'styled-components'
 import Sidebar from './sidebar'
 import RecordsTable from './records-table'
 import RecordModal from './record-modal'
@@ -16,41 +17,139 @@ type Record = {
   createdAt: string
 }
 
-export default function RecordsPage() {
+const Layout = styled.div`
+  display: flex;
+  min-height: 100vh;
+  background: #f4f7f0;
+`
+
+const Main = styled.main`
+  flex: 1;
+  padding: 24px;
+`
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+`
+
+const PageTitle = styled.h1`
+  font-size: 20px;
+  font-weight: 500;
+  color: #1a3a2a;
+  margin: 0;
+`
+
+const PageSub = styled.p`
+  font-size: 13px;
+  color: #7a9070;
+  margin: 4px 0 0;
+`
+
+const Controls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`
+
+const RoleSelect = styled.select`
+  border: 1px solid #d0dcc8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  background: #fff;
+  color: #1a3a2a;
+  outline: none;
+`
+
+const AddButton = styled.button`
+  background: #1a3a2a;
+  color: #c8d96a;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  &:hover { opacity: 0.9; }
+`
+
+const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+`
+
+const StatCard = styled.div`
+  background: #fff;
+  border: 1px solid #d0dcc8;
+  border-radius: 12px;
+  padding: 16px;
+`
+
+const StatLabel = styled.p`
+  font-size: 12px;
+  color: #7a9070;
+  margin: 0 0 4px;
+`
+
+const StatValue = styled.p<{ color?: string }>`
+  font-size: 24px;
+  font-weight: 500;
+  color: ${p => p.color || '#1a3a2a'};
+  margin: 0;
+`
+
+const SearchInput = styled.input`
+  width: 100%;
+  border: 1px solid #d0dcc8;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  background: #fff;
+  color: #1a3a2a;
+  outline: none;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  &:focus { border-color: #1a3a2a; }
+`
+
+const LoadingText = styled.div`
+  text-align: center;
+  padding: 48px;
+  color: #7a9070;
+  font-size: 13px;
+`
+
+export default function DataManagementPage() {
   const [records, setRecords] = useState<Record[]>([])
-  const [filtered, setFiltered] = useState<Record[]>([])
   const [search, setSearch] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editRecord, setEditRecord] = useState<Record | null>(null)
   const [userRole, setUserRole] = useState('Admin')
   const [loading, setLoading] = useState(true)
+  const filtered = useMemo(() => {
+  const q = search.toLowerCase()
+  return records.filter(r =>
+    r.name.toLowerCase().includes(q) ||
+    r.category.toLowerCase().includes(q)
+  )
+}, [search, records])
 
   useEffect(() => {
     fetchRecords()
   }, [])
 
-  useEffect(() => {
-  setTimeout(() => {
-    const q = search.toLowerCase()
-    setFiltered(
-      records.filter(r =>
-        r.name.toLowerCase().includes(q) ||
-        r.category.toLowerCase().includes(q) ||
-        r.status.toLowerCase().includes(q)
-      )
-    )
-  }, 0)
-}, [search, records])
-
   async function fetchRecords() {
-  setLoading(true)
-  const res = await fetch('/api/records')
-  const data = await res.json()
-  const recordsArray = Array.isArray(data) ? data : []
-  setRecords(recordsArray)
-  setFiltered(recordsArray)
-  setLoading(false)
-}
+    setLoading(true)
+    const res = await fetch('/api/records')
+    const data = await res.json()
+    const recordsArray = Array.isArray(data) ? data : []
+    setRecords(recordsArray)
+    setLoading(false)
+  }
 
   async function handleSave(form: Omit<Record, 'id' | 'createdAt'>) {
     if (editRecord) {
@@ -91,68 +190,48 @@ export default function RecordsPage() {
   const pending = records.filter(r => r.status === 'Pending').length
 
   return (
-    <div className="flex min-h-screen bg-[#f4f7f0]">
+    <Layout>
       <Sidebar />
-
-      <main className="flex-1 p-6">
-
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+      <Main>
+        <Header>
           <div>
-            <h1 className="text-xl font-medium text-[#1a3a2a]">Asset records</h1>
-            <p className="text-sm text-[#7a9070] mt-1">Manage all system assets</p>
+            <PageTitle>Asset records</PageTitle>
+            <PageSub>Manage all system assets</PageSub>
           </div>
-          <div className="flex items-center gap-3">
-            {/* Role switcher for demo */}
-            <select
-              className="border border-[#d0dcc8] rounded-lg px-3 py-2 text-sm bg-white text-[#1a3a2a] outline-none"
-              value={userRole}
-              onChange={e => setUserRole(e.target.value)}
-            >
+          <Controls>
+            <RoleSelect value={userRole} onChange={e => setUserRole(e.target.value)}>
               <option>Admin</option>
               <option>Manager</option>
               <option>Viewer</option>
-            </select>
+            </RoleSelect>
             {(userRole === 'Admin' || userRole === 'Manager') && (
-              <button
-                onClick={() => { setEditRecord(null); setIsModalOpen(true) }}
-                className="bg-[#1a3a2a] text-[#c8d96a] px-4 py-2 rounded-lg text-sm hover:bg-[#1a3a2a]/90"
-              >
+              <AddButton onClick={() => { setEditRecord(null); setIsModalOpen(true) }}>
                 + Add asset
-              </button>
+              </AddButton>
             )}
-          </div>
-        </div>
-
-        {/* Stat cards */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-xl border border-[#d0dcc8] p-4">
-            <p className="text-xs text-[#7a9070] mb-1">Total assets</p>
-            <p className="text-2xl font-medium text-[#1a3a2a]">{total}</p>
-          </div>
-          <div className="bg-white rounded-xl border border-[#d0dcc8] p-4">
-            <p className="text-xs text-[#7a9070] mb-1">Active</p>
-            <p className="text-2xl font-medium text-[#3b6d11]">{active}</p>
-          </div>
-          <div className="bg-white rounded-xl border border-[#d0dcc8] p-4">
-            <p className="text-xs text-[#7a9070] mb-1">Pending</p>
-            <p className="text-2xl font-medium text-[#854f0b]">{pending}</p>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="mb-4">
-          <input
-            className="w-full border border-[#d0dcc8] rounded-lg px-4 py-2 text-sm bg-white text-[#1a3a2a] outline-none"
-            placeholder="Search by name, category or status..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
-
-        {/* Table */}
+          </Controls>
+        </Header>
+        <StatsGrid>
+          <StatCard>
+            <StatLabel>Total assets</StatLabel>
+            <StatValue>{total}</StatValue>
+          </StatCard>
+          <StatCard>
+            <StatLabel>Active</StatLabel>
+            <StatValue color="#3b6d11">{active}</StatValue>
+          </StatCard>
+          <StatCard>
+            <StatLabel>Pending</StatLabel>
+            <StatValue color="#854f0b">{pending}</StatValue>
+          </StatCard>
+        </StatsGrid>
+        <SearchInput
+          placeholder="Search by name, category or status..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
         {loading ? (
-          <div className="text-center py-12 text-[#7a9070] text-sm">Loading assets...</div>
+          <LoadingText>Loading assets...</LoadingText>
         ) : (
           <RecordsTable
             records={filtered}
@@ -161,16 +240,13 @@ export default function RecordsPage() {
             userRole={userRole}
           />
         )}
-
-      </main>
-
-      {/* Modal */}
+      </Main>
       <RecordModal
         isOpen={isModalOpen}
         onClose={() => { setIsModalOpen(false); setEditRecord(null) }}
         onSave={handleSave}
         editRecord={editRecord}
       />
-    </div>
+    </Layout>
   )
 }

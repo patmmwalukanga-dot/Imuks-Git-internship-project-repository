@@ -1,5 +1,7 @@
 'use client'
 
+import styled from 'styled-components'
+
 type Record = {
   id: string
   name: string
@@ -18,73 +20,125 @@ type Props = {
   userRole: string
 }
 
-export default function RecordsTable({ records, onEdit, onDelete, userRole }: Props) {
+const TableWrapper = styled.div`
+  border: 1px solid #d0dcc8;
+  border-radius: 12px;
+  overflow: hidden;
+`
 
-  function getStatusStyle(status: string) {
-    if (status === 'Active') return 'bg-[#eaf3de] text-[#3b6d11]'
-    if (status === 'Pending') return 'bg-[#faeeda] text-[#854f0b]'
-    return 'bg-[#f1efe8] text-[#5f5e5a]'
+const Table = styled.table`
+  width: 100%;
+  font-size: 13px;
+  border-collapse: collapse;
+`
+
+const Thead = styled.thead`
+  background: #1a3a2a;
+`
+
+const Th = styled.th`
+  text-align: left;
+  padding: 10px 14px;
+  color: #c8d96a;
+  font-weight: 500;
+  font-size: 12px;
+`
+
+const Tr = styled.tr<{ even?: boolean }>`
+  background: ${p => p.even ? '#fff' : '#f9faf7'};
+  &:hover td { background: #f0f5eb; }
+`
+
+const Td = styled.td`
+  padding: 10px 14px;
+  border-bottom: 1px solid #e8eed4;
+  color: #2c3e28;
+`
+
+const Badge = styled.span<{ status: string }>`
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 500;
+  background: ${p =>
+    p.status === 'Active' ? '#eaf3de' :
+    p.status === 'Pending' ? '#faeeda' : '#f1efe8'};
+  color: ${p =>
+    p.status === 'Active' ? '#3b6d11' :
+    p.status === 'Pending' ? '#854f0b' : '#5f5e5a'};
+`
+
+const Actions = styled.div`
+  display: flex;
+  gap: 6px;
+`
+
+const ActionButton = styled.button<{ danger?: boolean }>`
+  border: 1px solid #d0dcc8;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  background: none;
+  color: ${p => p.danger ? '#ef4444' : '#1a3a2a'};
+  &:hover {
+    background: ${p => p.danger ? '#fef2f2' : '#e2edda'};
+    border-color: ${p => p.danger ? '#ef4444' : '#1a3a2a'};
   }
+`
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 48px;
+  color: #7a9070;
+  font-size: 13px;
+`
+
+export default function RecordsTable({ records, onEdit, onDelete, userRole }: Props) {
+  const canEdit = userRole === 'Admin' || userRole === 'Manager'
 
   if (records.length === 0) {
-    return (
-      <div className="text-center py-12 text-[#7a9070] text-sm">
-        No assets found. Click "Add asset" to create one.
-      </div>
-    )
+    return <EmptyState>No assets found. Click "Add asset" to create one.</EmptyState>
   }
 
   return (
-    <div className="border border-[#d0dcc8] rounded-xl overflow-hidden">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="bg-[#1a3a2a]">
-            <th className="text-left px-4 py-3 text-[#c8d96a] font-medium text-xs">Name</th>
-            <th className="text-left px-4 py-3 text-[#c8d96a] font-medium text-xs">Category</th>
-            <th className="text-left px-4 py-3 text-[#c8d96a] font-medium text-xs">Status</th>
-            <th className="text-left px-4 py-3 text-[#c8d96a] font-medium text-xs">Role</th>
-            <th className="text-left px-4 py-3 text-[#c8d96a] font-medium text-xs">Email</th>
-            <th className="text-left px-4 py-3 text-[#c8d96a] font-medium text-xs">Created</th>
-            {userRole === 'Admin' || userRole === 'Manager' ? (
-              <th className="text-left px-4 py-3 text-[#c8d96a] font-medium text-xs">Actions</th>
-            ) : null}
+    <TableWrapper>
+      <Table>
+        <Thead>
+          <tr>
+            <Th>Name</Th>
+            <Th>Category</Th>
+            <Th>Status</Th>
+            <Th>Role</Th>
+            <Th>Email</Th>
+            <Th>Created</Th>
+            {canEdit && <Th>Actions</Th>}
           </tr>
-        </thead>
+        </Thead>
         <tbody>
           {records.map((record, index) => (
-            <tr key={record.id} className={index % 2 === 0 ? 'bg-white' : 'bg-[#f9faf7]'}>
-              <td className="px-4 py-3 font-medium text-[#1a3a2a]">{record.name}</td>
-              <td className="px-4 py-3 text-[#7a9070]">{record.category}</td>
-              <td className="px-4 py-3">
-                <span className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusStyle(record.status)}`}>
-                  {record.status}
-                </span>
-              </td>
-              <td className="px-4 py-3 text-[#7a9070]">{record.role}</td>
-              <td className="px-4 py-3 text-[#7a9070]">{record.email}</td>
-              <td className="px-4 py-3 text-[#7a9070]">{record.createdAt}</td>
-              {userRole === 'Admin' || userRole === 'Manager' ? (
-                <td className="px-4 py-3">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => onEdit(record)}
-                      className="border border-[#d0dcc8] rounded-lg px-2 py-1 text-xs text-[#1a3a2a] hover:bg-[#e2edda]"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => onDelete(record.id)}
-                      className="border border-[#d0dcc8] rounded-lg px-2 py-1 text-xs text-red-500 hover:bg-red-50"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              ) : null}
-            </tr>
+            <Tr key={record.id} even={index % 2 === 0}>
+              <Td style={{ fontWeight: 500 }}>{record.name}</Td>
+              <Td style={{ color: '#7a9070' }}>{record.category}</Td>
+              <Td>
+                <Badge status={record.status}>{record.status}</Badge>
+              </Td>
+              <Td style={{ color: '#7a9070' }}>{record.role}</Td>
+              <Td style={{ color: '#7a9070' }}>{record.email}</Td>
+              <Td style={{ color: '#7a9070' }}>{record.createdAt}</Td>
+              {canEdit && (
+                <Td>
+                  <Actions>
+                    <ActionButton onClick={() => onEdit(record)}>Edit</ActionButton>
+                    <ActionButton danger onClick={() => onDelete(record.id)}>Delete</ActionButton>
+                  </Actions>
+                </Td>
+              )}
+            </Tr>
           ))}
         </tbody>
-      </table>
-    </div>
+      </Table>
+    </TableWrapper>
   )
 }

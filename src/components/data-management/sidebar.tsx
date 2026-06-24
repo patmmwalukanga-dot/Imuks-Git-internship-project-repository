@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import styled from 'styled-components'
 
 const navItems = [
   { label: 'Dashboard', icon: '⊞' },
@@ -10,66 +11,165 @@ const navItems = [
   { label: 'Settings', icon: '⚙️' },
 ]
 
+const SidebarWrapper = styled.div<{ $dark: boolean }>`
+  display: flex;
+  flex-direction: column;
+  width: 192px;
+  min-height: 100vh;
+  background: ${p => p.$dark ? '#1a3a2a' : '#f4f7f0'};
+  border-right: ${p => p.$dark ? 'none' : '1px solid #d0dcc8'};
+`
+
+const LogoArea = styled.div<{ $dark: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 16px;
+  border-bottom: 1px solid ${p => p.$dark ? 'rgba(255,255,255,0.1)' : '#d0dcc8'};
+`
+
+const LogoIcon = styled.div`
+  width: 28px;
+  height: 28px;
+  background: #c8d96a;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a3a2a;
+`
+
+const LogoTitle = styled.div<{ $dark: boolean }>`
+  font-size: 14px;
+  font-weight: 500;
+  color: ${p => p.$dark ? '#c8d96a' : '#1a3a2a'};
+`
+
+const LogoSub = styled.div<{ $dark: boolean }>`
+  font-size: 10px;
+  color: ${p => p.$dark ? 'rgba(255,255,255,0.4)' : '#7a9070'};
+`
+
+const Nav = styled.nav`
+  flex: 1;
+  padding: 12px 0;
+`
+
+const NavButton = styled.button<{ $active: boolean; $dark: boolean }>`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: ${p => p.$active ? '8px 14px' : '8px 16px'};
+  font-size: 13px;
+  text-align: left;
+  border: none;
+  border-left: ${p => p.$active ? '2px solid' : '2px solid transparent'};
+  border-left-color: ${p => p.$active ? (p.$dark ? '#c8d96a' : '#1a3a2a') : 'transparent'};
+  cursor: pointer;
+  background: ${p => p.$active
+    ? p.$dark ? 'rgba(200,217,106,0.15)' : '#e2edda'
+    : 'transparent'};
+  color: ${p => p.$active
+    ? p.$dark ? '#c8d96a' : '#1a3a2a'
+    : p.$dark ? 'rgba(255,255,255,0.55)' : '#4a6a40'};
+  font-weight: ${p => p.$active && !p.$dark ? '500' : 'normal'};
+  &:hover {
+    color: ${p => p.$dark ? 'rgba(255,255,255,0.8)' : '#1a3a2a'};
+    background: ${p => !p.$active && !p.$dark ? '#e2edda' : ''};
+  }
+`
+
+const ThemeArea = styled.div<{ $dark: boolean }>`
+  padding: 12px 16px;
+  border-top: 1px solid ${p => p.$dark ? 'rgba(255,255,255,0.1)' : '#d0dcc8'};
+`
+
+const ThemeButton = styled.button<{ $dark: boolean }>`
+  width: 100%;
+  font-size: 12px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid ${p => p.$dark ? 'rgba(255,255,255,0.2)' : '#d0dcc8'};
+  background: transparent;
+  color: ${p => p.$dark ? 'rgba(255,255,255,0.5)' : '#7a9070'};
+  cursor: pointer;
+  &:hover {
+    color: ${p => p.$dark ? 'rgba(255,255,255,0.8)' : '#1a3a2a'};
+  }
+`
+
+const UserArea = styled.div<{ $dark: boolean }>`
+  padding: 16px;
+  border-top: 1px solid ${p => p.$dark ? 'rgba(255,255,255,0.1)' : '#d0dcc8'};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+const UserAvatar = styled.div`
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(200,217,106,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c8d96a;
+  font-size: 12px;
+`
+
+const UserName = styled.div<{ $dark: boolean }>`
+  font-size: 12px;
+  font-weight: 500;
+  color: ${p => p.$dark ? '#fff' : '#1a3a2a'};
+`
+
+const UserRole = styled.div<{ $dark: boolean }>`
+  font-size: 10px;
+  color: ${p => p.$dark ? 'rgba(255,255,255,0.4)' : '#7a9070'};
+`
+
 export default function Sidebar() {
   const [active, setActive] = useState('Records')
   const [dark, setDark] = useState(true)
 
   return (
-    <div className={`flex flex-col w-48 min-h-screen ${dark ? 'bg-[#1a3a2a]' : 'bg-[#f4f7f0] border-r border-[#d0dcc8]'}`}>
-      
-      {/* Logo */}
-      <div className={`flex items-center gap-2 px-4 py-5 border-b ${dark ? 'border-white/10' : 'border-[#d0dcc8]'}`}>
-        <div className="w-7 h-7 bg-[#c8d96a] rounded-md flex items-center justify-center text-[#1a3a2a] font-bold text-sm">G</div>
+    <SidebarWrapper $dark={dark}>
+      <LogoArea $dark={dark}>
+        <LogoIcon>G</LogoIcon>
         <div>
-          <div className={`text-sm font-medium ${dark ? 'text-[#c8d96a]' : 'text-[#1a3a2a]'}`}>GreenShield</div>
-          <div className={`text-[10px] ${dark ? 'text-white/40' : 'text-[#7a9070]'}`}>Secure. Reliable.</div>
+          <LogoTitle $dark={dark}>GreenShield</LogoTitle>
+          <LogoSub $dark={dark}>Secure. Reliable.</LogoSub>
         </div>
-      </div>
-
-      {/* Nav */}
-      <nav className="flex-1 py-3">
-        {navItems.map((item) => (
-          <button
+      </LogoArea>
+      <Nav>
+        {navItems.map(item => (
+          <NavButton
             key={item.label}
+            $active={active === item.label}
+            $dark={dark}
             onClick={() => setActive(item.label)}
-            className={`w-full flex items-center gap-2 px-4 py-2 text-sm text-left transition-colors
-              ${active === item.label
-                ? dark
-                  ? 'bg-[#c8d96a]/15 text-[#c8d96a] border-l-2 border-[#c8d96a] pl-[14px]'
-                  : 'bg-[#e2edda] text-[#1a3a2a] border-l-2 border-[#1a3a2a] pl-[14px] font-medium'
-                : dark
-                  ? 'text-white/55 hover:text-white/80'
-                  : 'text-[#4a6a40] hover:bg-[#e2edda]'
-              }`}
           >
             <span>{item.icon}</span>
             {item.label}
-          </button>
+          </NavButton>
         ))}
-      </nav>
-
-      {/* Theme toggle */}
-      <div className={`px-4 py-3 border-t ${dark ? 'border-white/10' : 'border-[#d0dcc8]'}`}>
-        <button
-          onClick={() => setDark(!dark)}
-          className={`w-full text-xs py-1.5 rounded-md border transition-colors
-            ${dark ? 'border-white/20 text-white/50 hover:text-white/80' : 'border-[#d0dcc8] text-[#7a9070] hover:bg-[#e2edda]'}`}
-        >
+      </Nav>
+      <ThemeArea $dark={dark}>
+        <ThemeButton $dark={dark} onClick={() => setDark(!dark)}>
           {dark ? '☀ Light theme' : '🌙 Dark theme'}
-        </button>
-      </div>
-
-      {/* User */}
-      <div className={`px-4 py-4 border-t ${dark ? 'border-white/10' : 'border-[#d0dcc8]'}`}>
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full bg-[#c8d96a]/20 flex items-center justify-center text-[#c8d96a] text-xs">A</div>
-          <div>
-            <div className={`text-xs font-medium ${dark ? 'text-white' : 'text-[#1a3a2a]'}`}>Admin User</div>
-            <div className={`text-[10px] ${dark ? 'text-white/40' : 'text-[#7a9070]'}`}>Administrator</div>
-          </div>
+        </ThemeButton>
+      </ThemeArea>
+      <UserArea $dark={dark}>
+        <UserAvatar>A</UserAvatar>
+        <div>
+          <UserName $dark={dark}>Admin User</UserName>
+          <UserRole $dark={dark}>Administrator</UserRole>
         </div>
-      </div>
-
-    </div>
+      </UserArea>
+    </SidebarWrapper>
   )
 }
