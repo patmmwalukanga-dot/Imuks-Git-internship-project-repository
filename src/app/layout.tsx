@@ -3,6 +3,7 @@ import NextTopLoader from "nextjs-toploader";
 import { Providers } from "./providers";
 import { createMetadata } from "@lib/seo";
 import "./globals.css";
+import Footer from "../components/footer";
 
 export const metadata: Metadata = createMetadata({
   title: "Next.js Project Template",
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body>
         <NextTopLoader color="#2563eb" showSpinner={false} />
         <Providers>{children}</Providers>
+        <Footer/>
       </body>
     </html>
   );
