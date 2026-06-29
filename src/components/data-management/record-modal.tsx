@@ -166,7 +166,7 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setForm({ ...editRecord })
   } else {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+   
     setForm({ 
       name: '', 
       category: 'Security', 
@@ -176,7 +176,7 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
       email: '' 
     })
   }
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+  
   setErrors({})
 }, [isOpen, editRecord])
 
