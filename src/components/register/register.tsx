@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-// ============================================
-// TYPES
-// ============================================
+// --- TYPES ---
 type PersonType = 'student' | 'staff';
 
 interface RegistrationEntry {
@@ -25,11 +23,8 @@ interface RegistrationEntry {
   status: 'active' | 'pending' | 'inactive';
 }
 
-// ============================================
-// MAIN COMPONENT
-// ============================================
-export default function Home() {
-  // ===== STATE =====
+export default function Register() {
+  // --- STATE ---
   const [entries, setEntries] = useState<RegistrationEntry[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,245 +49,89 @@ export default function Home() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [stats, setStats] = useState({
-    total: 0,
-    students: 0,
-    staff: 0,
-    active: 0,
-    pending: 0
-  });
 
-  // ===== STATS (Moved up to be available for effects) =====
-  const updateStats = (data: RegistrationEntry[]) => {
-    setStats({
-      total: data.length,
-      students: data.filter(e => e.type === 'student').length,
-      staff: data.filter(e => e.type === 'staff').length,
-      active: data.filter(e => e.status === 'active').length,
-      pending: data.filter(e => e.status === 'pending').length
-    });
-  };
-
-  // ===== EFFECTS (Fixed) =====
+  // --- EFFECTS ---
   useEffect(() => {
-    const savedEntries = localStorage.getItem('registrationEntries');
-    if (savedEntries) {
-      try {
-        const parsed = JSON.parse(savedEntries);
-        setEntries(parsed);
-        updateStats(parsed);
-      } catch (error) {
-        console.error('Failed to load entries:', error);
-      }
-    }
     setMounted(true);
+    const saved = localStorage.getItem('registrationEntries');
+    if (saved) setEntries(JSON.parse(saved));
   }, []);
 
   useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('registrationEntries', JSON.stringify(entries));
-      updateStats(entries);
-    }
+    if (mounted) localStorage.setItem('registrationEntries', JSON.stringify(entries));
   }, [entries, mounted]);
 
-  // ===== VALIDATION =====
-  const validateForm = () => {
+  // --- LOGIC ---
+  const getStats = () => ({
+    total: entries.length,
+    students: entries.filter(e => e.type === 'student').length,
+    staff: entries.filter(e => e.type === 'staff').length,
+    active: entries.filter(e => e.status === 'active').length,
+    pending: entries.filter(e => e.status === 'pending').length
+  });
+
+  const stats = getStats();
+
+  const filteredEntries = entries.filter(entry => {
+    const matchesType = filterType === 'all' || entry.type === filterType;
+    const matchesSearch = searchTerm === '' || 
+      entry.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      entry.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      entry.email.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesType && matchesSearch;
+  });
+
+  const validate = () => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
-    } else if (formData.firstName.length < 2) {
-      newErrors.firstName = 'First name must be at least 2 characters';
-    }
-
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
-    } else if (formData.lastName.length < 2) {
-      newErrors.lastName = 'Last name must be at least 2 characters';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^[0-9+\-\s()]+$/.test(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number';
-    }
-
-    if (!formData.department) {
-      newErrors.department = 'Department is required';
-    }
-
-    if (formData.type === 'student') {
-      if (!formData.studentId?.trim()) {
-        newErrors.studentId = 'Student ID is required';
-      }
-      if (!formData.course) {
-        newErrors.course = 'Course is required';
-      }
-      if (!formData.year) {
-        newErrors.year = 'Year is required';
-      }
-    } else {
-      if (!formData.staffId?.trim()) {
-        newErrors.staffId = 'Staff ID is required';
-      }
-      if (!formData.role) {
-        newErrors.role = 'Role is required';
-      }
-    }
-
+    if (!formData.firstName) newErrors.firstName = 'Required';
+    if (!formData.lastName) newErrors.lastName = 'Required';
+    if (!formData.email.includes('@')) newErrors.email = 'Invalid email';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // ===== CRUD OPERATIONS (Fixed purity issue) =====
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    if (!validateForm()) {
-      setIsLoading(false);
-      return;
-    }
-
-    const duplicateEmail = entries.some(
-      entry => entry.email.toLowerCase() === formData.email.toLowerCase() && 
-      entry.id !== editingId
-    );
-    if (duplicateEmail) {
-      alert('This email is already registered!');
-      setIsLoading(false);
-      return;
-    }
+    if (!validate()) return;
 
     if (editingId) {
-      setEntries(entries.map(entry =>
-        entry.id === editingId
-          ? { ...entry, ...formData }
-          : entry
-      ));
-      alert('Entry updated successfully!');
+      setEntries(entries.map(ent => ent.id === editingId ? { ...ent, ...formData } : ent));
       setEditingId(null);
     } else {
-      // Fixed: Date.now() moved into event handler
-      const newEntry: RegistrationEntry = {
-        ...formData,
-        id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
-        dateRegistered: new Date().toISOString(),
-        status: 'pending'
-      };
-      setEntries([newEntry, ...entries]);
-      alert(`${formData.type === 'student' ? 'Student' : 'Staff'} registered successfully!`);
+      setEntries([...entries, { ...formData, id: Date.now().toString(), dateRegistered: new Date().toISOString(), status: 'pending' }]);
     }
-
-    resetForm();
-    setIsLoading(false);
-  };
-
-  const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this entry?')) {
-      setEntries(entries.filter(entry => entry.id !== id));
-      alert('Entry deleted successfully!');
-      if (editingId === id) setEditingId(null);
-    }
-  };
-
-  const handleEdit = (id: string) => {
-    const entry = entries.find(e => e.id === id);
-    if (entry) {
-      setFormData({
-        type: entry.type,
-        firstName: entry.firstName,
-        lastName: entry.lastName,
-        email: entry.email,
-        phone: entry.phone,
-        department: entry.department,
-        position: entry.position || '',
-        studentId: entry.studentId || '',
-        course: entry.course || '',
-        year: entry.year || '',
-        staffId: entry.staffId || '',
-        role: entry.role || ''
-      });
-      setSelectedType(entry.type);
-      setEditingId(id);
-      setErrors({});
-      document.getElementById('registration-form')?.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleCancelEdit = () => {
     resetForm();
   };
 
   const resetForm = () => {
-    setEditingId(null);
-    setFormData({
-      type: 'student',
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      department: '',
-      position: '',
-      studentId: '',
-      course: '',
-      year: '',
-      staffId: '',
-      role: ''
-    });
-    setErrors({});
+    setFormData({ type: 'student', firstName: '', lastName: '', email: '', phone: '', department: '', position: '', studentId: '', course: '', year: '', staffId: '', role: '' });
   };
 
-  const handleTypeChange = (type: PersonType) => {
-    setSelectedType(type);
-    setFormData({
-      ...formData,
-      type: type,
-      studentId: '',
-      course: '',
-      year: '',
-      staffId: '',
-      role: ''
-    });
-    setErrors({});
-  };
+  const handleDelete = (id: string) => setEntries(entries.filter(e => e.id !== id));
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-  };
-
-  const getBadge = (status: string) => {
-    const map: Record<string, string> = {
-      active: 'badge-active',
-      pending: 'badge-pending',
-      inactive: 'badge-inactive'
-    };
-    return map[status] || map.pending;
-  };
-
-  const filteredEntries = entries.filter(entry => {
-    const matchesSearch = 
-      entry.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      entry.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      entry.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      entry.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (entry.studentId && entry.studentId.includes(searchTerm)) ||
-      (entry.staffId && entry.staffId.includes(searchTerm));
-    
-    const matchesType = filterType === 'all' || entry.type === filterType;
-    
-    return matchesSearch && matchesType;
-  });
-
+  // --- RENDER ---
   if (!mounted) return null;
+    function handleTypeChange(arg0: string): void {
+        throw new Error('Function not implemented.');
+    }
 
-  return (
+    function handleCancelEdit(event: React.MouseEvent<HTMLButtonElement>): void {
+        throw new Error('Function not implemented.');
+    }
+
+    function getInitials(firstName: string, lastName: string): import("react").ReactNode {
+        throw new Error('Function not implemented.');
+    }
+
+    function getBadge(status: string) {
+        throw new Error('Function not implemented.');
+    }
+
+    function handleEdit(id: string): void {
+        throw new Error('Function not implemented.');
+    }
+
+    return (
     <div className="min-h-screen bg-[#E8F5E9]">
       <header className="bg-[#1B5E20] sticky top-0 z-50 shadow-lg">
         <div className="max-w-6xl mx-auto px-6 py-4">
