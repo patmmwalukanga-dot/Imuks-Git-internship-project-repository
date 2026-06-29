@@ -139,7 +139,7 @@ export default function DataManagementPage() {
 }, [search, records])
 
   useEffect(() => {
-  fetchRecords()
+    fetchRecords()
 }, [])
 
   async function fetchRecords() {
