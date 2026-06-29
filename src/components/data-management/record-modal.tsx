@@ -162,22 +162,22 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
   const [errors, setErrors] = useState<Partial<Record>>({})
 
   useEffect(() => {
-  if (editRecord) {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setForm({ ...editRecord })
-  } else {
-   
-    setForm({ 
-      name: '', 
-      category: 'Security', 
-      description: '', 
-      status: 'Active', 
-      role: 'Viewer', 
-      email: '' 
-    })
-  }
-  
-  setErrors({})
+  const timer = setTimeout(() => {
+    if (editRecord) {
+      setForm({ ...editRecord })
+    } else {
+      setForm({ 
+        name: '', 
+        category: 'Security', 
+        description: '', 
+        status: 'Active', 
+        role: 'Viewer', 
+        email: '' 
+      })
+    }
+    setErrors({})
+  }, 0)
+  return () => clearTimeout(timer)
 }, [isOpen, editRecord])
 
   function validate() {
