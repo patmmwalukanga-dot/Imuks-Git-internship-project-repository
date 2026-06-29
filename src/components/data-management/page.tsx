@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect as _useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import Sidebar from './sidebar'
 import RecordsTable from './records-table'
@@ -138,6 +138,9 @@ export default function DataManagementPage() {
   )
 }, [search, records])
 
+  useEffect(() => {
+  fetchRecords()
+}, [])
 
   async function fetchRecords() {
     setLoading(true)
