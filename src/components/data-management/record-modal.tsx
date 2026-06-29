@@ -81,9 +81,9 @@ const Label = styled.label`
   margin-bottom: 4px;
 `
 
-const Input = styled.input<{ error?: boolean }>`
+const Input = styled.input<{ $error?: boolean }>`
   width: 100%;
-  border: 1px solid ${p => p.error ? '#ef4444' : '#d0dcc8'};
+  border: 1px solid ${p => p.$error ? '#ef4444' : '#d0dcc8'};
   border-radius: 8px;
   padding: 8px 10px;
   font-size: 13px;
@@ -106,9 +106,9 @@ const Select = styled.select`
   box-sizing: border-box;
 `
 
-const Textarea = styled.textarea<{ error?: boolean }>`
+const Textarea = styled.textarea<{ $error?: boolean }>`
   width: 100%;
-  border: 1px solid ${p => p.error ? '#ef4444' : '#d0dcc8'};
+  border: 1px solid ${p => p.$error ? '#ef4444' : '#d0dcc8'};
   border-radius: 8px;
   padding: 8px 10px;
   font-size: 13px;
@@ -162,15 +162,23 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
   const [errors, setErrors] = useState<Partial<Record>>({})
 
   useEffect(() => {
-  setTimeout(() => {
-    if (editRecord) {
-      setForm(editRecord as Record)
-    } else {
-      setForm({ name: '', category: 'Security', description: '', status: 'Active', role: 'Viewer', email: '' })
-    }
-    setErrors({})
-  }, 0)
-}, [editRecord, isOpen])
+  if (editRecord) {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setForm({ ...editRecord })
+  } else {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setForm({ 
+      name: '', 
+      category: 'Security', 
+      description: '', 
+      status: 'Active', 
+      role: 'Viewer', 
+      email: '' 
+    })
+  }
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  setErrors({})
+}, [isOpen, editRecord])
 
   function validate() {
     const newErrors: Partial<Record> = {}
@@ -199,7 +207,7 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
           <FormGroup>
             <Label>Asset name *</Label>
             <Input
-              error={!!errors.name}
+              $error={!!errors.name}
               value={form.name}
               onChange={e => setForm({ ...form, name: e.target.value })}
               placeholder="e.g. Asset #1004"
@@ -218,7 +226,7 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
         <FormGroup>
           <Label>Description *</Label>
           <Textarea
-            error={!!errors.description}
+            $error={!!errors.description}
             rows={2}
             value={form.description}
             onChange={e => setForm({ ...form, description: e.target.value })}
@@ -247,7 +255,7 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
         <FormGroup>
           <Label>Email *</Label>
           <Input
-            error={!!errors.email}
+            $error={!!errors.email}
             type="email"
             value={form.email}
             onChange={e => setForm({ ...form, email: e.target.value })}
