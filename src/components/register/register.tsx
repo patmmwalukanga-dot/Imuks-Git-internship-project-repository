@@ -62,9 +62,19 @@ export default function Home() {
     pending: 0
   });
 
-  // ===== EFFECTS =====
+  // ===== STATS (Moved up to be available for effects) =====
+  const updateStats = (data: RegistrationEntry[]) => {
+    setStats({
+      total: data.length,
+      students: data.filter(e => e.type === 'student').length,
+      staff: data.filter(e => e.type === 'staff').length,
+      active: data.filter(e => e.status === 'active').length,
+      pending: data.filter(e => e.status === 'pending').length
+    });
+  };
+
+  // ===== EFFECTS (Fixed) =====
   useEffect(() => {
-    setMounted(true);
     const savedEntries = localStorage.getItem('registrationEntries');
     if (savedEntries) {
       try {
@@ -75,6 +85,7 @@ export default function Home() {
         console.error('Failed to load entries:', error);
       }
     }
+    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -83,17 +94,6 @@ export default function Home() {
       updateStats(entries);
     }
   }, [entries, mounted]);
-
-  // ===== STATS =====
-  const updateStats = (data: RegistrationEntry[]) => {
-    setStats({
-      total: data.length,
-      students: data.filter(e => e.type === 'student').length,
-      staff: data.filter(e => e.type === 'staff').length,
-      active: data.filter(e => e.status === 'active').length,
-      pending: data.filter(e => e.status === 'pending').length
-    });
-  };
 
   // ===== VALIDATION =====
   const validateForm = () => {
@@ -150,7 +150,7 @@ export default function Home() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // ===== CRUD OPERATIONS =====
+  // ===== CRUD OPERATIONS (Fixed purity issue) =====
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -179,9 +179,10 @@ export default function Home() {
       alert('Entry updated successfully!');
       setEditingId(null);
     } else {
+      // Fixed: Date.now() moved into event handler
       const newEntry: RegistrationEntry = {
         ...formData,
-        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+        id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
         dateRegistered: new Date().toISOString(),
         status: 'pending'
       };
@@ -262,7 +263,6 @@ export default function Home() {
     setErrors({});
   };
 
-  // ===== HELPERS =====
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
@@ -294,7 +294,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#E8F5E9]">
-      {/* HEADER - Dark Green */}
       <header className="bg-[#1B5E20] sticky top-0 z-50 shadow-lg">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -316,7 +315,7 @@ export default function Home() {
           </div>
         </div>
       </header>
-
+      
       {/* STATS BAR */}
       <div className="bg-white border-b border-[#C8E6C9] shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-3">
