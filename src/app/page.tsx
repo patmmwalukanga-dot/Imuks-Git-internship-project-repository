@@ -1,10 +1,10 @@
-import { DashboardOverview } from "@features/dashboard/components/dashboard-overview";
-import { AppShell } from "@layouts/app-shell";
+// src/app/page.tsx
+import Register from './components/Register';
 
-export default function HomePage() {
+export default function Home() {
   return (
-    <AppShell>
-      <DashboardOverview />
-    </AppShell>
+    <main>
+      <Register />
+    </main>
   );
 }
