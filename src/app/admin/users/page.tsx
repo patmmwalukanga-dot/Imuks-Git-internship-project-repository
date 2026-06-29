@@ -35,16 +35,6 @@ export default function StudentsPage() {
     return () => window.removeEventListener("darkModeChange", handleDarkModeChange);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("users", JSON.stringify(users));
-  }, [users]);
-
-  useEffect(() => {
-    const handleDarkModeChange = (e: Event) => setIsDark((e as CustomEvent).detail);
-    window.addEventListener("darkModeChange", handleDarkModeChange);
-    return () => window.removeEventListener("darkModeChange", handleDarkModeChange);
-  }, []);
-
   const cardBg = isDark ? "#1a1a1a" : "#fff";
   const cardText = isDark ? "#ffffff" : "#01381e";
   const pageBg = isDark ? "#000000" : "#Dee2b1";
