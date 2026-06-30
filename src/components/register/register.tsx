@@ -52,9 +52,9 @@ export default function Register() {
 
   // --- EFFECTS ---
   useEffect(() => {
-    setMounted(true);
     const saved = localStorage.getItem('registrationEntries');
     if (saved) setEntries(JSON.parse(saved));
+    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -94,13 +94,22 @@ export default function Register() {
     e.preventDefault();
     if (!validate()) return;
 
+    setIsLoading(true);
+
     if (editingId) {
       setEntries(entries.map(ent => ent.id === editingId ? { ...ent, ...formData } : ent));
       setEditingId(null);
     } else {
-      setEntries([...entries, { ...formData, id: Date.now().toString(), dateRegistered: new Date().toISOString(), status: 'pending' }]);
+      const newEntry: RegistrationEntry = {
+        ...formData,
+        id: crypto.randomUUID(),
+        dateRegistered: new Date().toISOString(),
+        status: 'pending',
+      };
+      setEntries([...entries, newEntry]);
     }
     resetForm();
+    setIsLoading(false);
   };
 
   const resetForm = () => {
@@ -109,29 +118,60 @@ export default function Register() {
 
   const handleDelete = (id: string) => setEntries(entries.filter(e => e.id !== id));
 
+  const handleTypeChange = (type: PersonType) => {
+    setSelectedType(type);
+    setFormData((prev) => ({ ...prev, type }));
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    resetForm();
+  };
+
+  const getInitials = (firstName: string, lastName: string) => {
+    const first = firstName.charAt(0).toUpperCase();
+    const last = lastName.charAt(0).toUpperCase();
+    return `${first}${last}`;
+  };
+
+  const getBadge = (status: RegistrationEntry['status']) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-700';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-700';
+      case 'inactive':
+        return 'bg-gray-100 text-gray-600';
+      default:
+        return 'bg-gray-100 text-gray-600';
+    }
+  };
+
+  const handleEdit = (id: string) => {
+    const entry = entries.find((e) => e.id === id);
+    if (!entry) return;
+    setFormData({
+      type: entry.type,
+      firstName: entry.firstName,
+      lastName: entry.lastName,
+      email: entry.email,
+      phone: entry.phone,
+      department: entry.department,
+      position: entry.position,
+      studentId: entry.studentId ?? '',
+      course: entry.course ?? '',
+      year: entry.year ?? '',
+      staffId: entry.staffId ?? '',
+      role: entry.role ?? '',
+    });
+    setSelectedType(entry.type);
+    setEditingId(id);
+  };
+
   // --- RENDER ---
   if (!mounted) return null;
-    function handleTypeChange(arg0: string): void {
-        throw new Error('Function not implemented.');
-    }
 
-    function handleCancelEdit(event: React.MouseEvent<HTMLButtonElement>): void {
-        throw new Error('Function not implemented.');
-    }
-
-    function getInitials(firstName: string, lastName: string): import("react").ReactNode {
-        throw new Error('Function not implemented.');
-    }
-
-    function getBadge(status: string) {
-        throw new Error('Function not implemented.');
-    }
-
-    function handleEdit(id: string): void {
-        throw new Error('Function not implemented.');
-    }
-
-    return (
+  return (
     <div className="min-h-screen bg-[#E8F5E9]">
       <header className="bg-[#1B5E20] sticky top-0 z-50 shadow-lg">
         <div className="max-w-6xl mx-auto px-6 py-4">
