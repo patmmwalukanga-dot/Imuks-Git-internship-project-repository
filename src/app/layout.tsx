@@ -3,7 +3,6 @@ import NextTopLoader from "nextjs-toploader";
 import { Providers } from "./providers";
 import { createMetadata } from "@lib/seo";
 import "./globals.css";
-import Footer from "../components/footer";
 import Navbar from "../components/navbar/navbar"; 
 
 export const metadata: Metadata = createMetadata({
@@ -24,7 +23,6 @@ export default function RootLayout({
         <NextTopLoader color="#2563eb" showSpinner={false} />
         <Navbar /> 
         <Providers>{children}</Providers>
-        <Footer/>
       </body>
     </html>
   );
