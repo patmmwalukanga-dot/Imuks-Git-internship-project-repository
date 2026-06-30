@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  Employee,
-  AttendanceRecord,
   AttendanceStatus,
   DailyRollCall,
   DEFAULT_EMPLOYEES,
@@ -72,11 +70,13 @@ export default function AttendancePage() {
     setPage(1);
   }, [selectedDate]);
 
-  useEffect(() => {
-    loadRollCall();
-  }, [loadRollCall]);
+ useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  loadRollCall();
+}, [loadRollCall]);
 
-  useEffect(() => {
+ useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHistory(loadAllRecords());
   }, [tab]);
 
