@@ -40,3 +40,5 @@ export const rowActionsStyle: CSSProperties = {
   display: "flex",
   gap: 8,
 };
+
+

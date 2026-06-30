@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Theme } from "@/lib/theme";
+import type { Theme } from "@/hooks/theme";
 import {
   statCardAccentStyle,
   statIconStyle,
@@ -46,3 +46,5 @@ export default function StatCard({
     </div>
   );
 }
+
+

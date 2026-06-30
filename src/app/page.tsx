@@ -9,7 +9,7 @@ import Overview from "@/components/dashboard/overview";
 import ReportsView from "@/components/dashboard/reports-view";
 import { GITHUB_DATA_URL, MOCK_DATA, PAGES } from "@/constants/mock-data";
 import { useTheme } from "@/hooks/use-theme";
-import { createGlobalStyles, fmtDate } from "@/lib/dashboard-utils";
+import { createGlobalStyles, fmtDate } from "@/components/dashboard/dashboard-utils";
 import type { DashboardData } from "@/types/dashboard";
 
 export default function Home() {
@@ -165,3 +165,5 @@ export default function Home() {
     </>
   );
 }
+
+

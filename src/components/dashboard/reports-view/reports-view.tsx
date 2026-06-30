@@ -17,7 +17,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { Theme } from "@/lib/theme";
+import type { Theme } from "@/hooks/theme";
 import type { AttendanceRecord, Student } from "@/types/dashboard";
 import {
   breakdownCardStyle,
@@ -301,3 +301,5 @@ export default function ReportsView({ theme }: { theme: Theme }) {
     </div>
   );
 }
+
+

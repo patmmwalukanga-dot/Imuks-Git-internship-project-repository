@@ -18,8 +18,8 @@ import {
 import { AlertTriangle, Calendar, TrendingUp, Users } from "lucide-react";
 import CustomTooltip from "@/components/dashboard/common/custom-tooltip";
 import StatCard from "@/components/dashboard/common/stat-card";
-import { avg, gradeInfo, groupBy } from "@/lib/dashboard-utils";
-import type { Theme } from "@/lib/theme";
+import { avg, gradeInfo, groupBy } from "@/components/dashboard/dashboard-utils";
+import type { Theme } from "@/hooks/theme";
 import type { DashboardData } from "@/types/dashboard";
 import {
   alertBodyStyle,
@@ -171,3 +171,5 @@ export default function Overview({ data, theme }: { data: DashboardData; theme: 
     </div>
   );
 }
+
+

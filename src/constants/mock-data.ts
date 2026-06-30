@@ -44,3 +44,5 @@ export const PAGES = [
   { id: "attendance", label: "Attendance" },
   { id: "reports", label: "Reports" },
 ];
+
+

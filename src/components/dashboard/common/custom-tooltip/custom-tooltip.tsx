@@ -1,4 +1,4 @@
-import type { Theme } from "@/lib/theme";
+import type { Theme } from "@/hooks/theme";
 import type { TooltipPayload } from "@/types/dashboard";
 import { tooltipLabelStyle, tooltipStyle, tooltipValueStyle } from "./custom-tooltip.styles";
 
@@ -31,3 +31,5 @@ export default function CustomTooltip({
     </div>
   );
 }
+
+

@@ -53,3 +53,5 @@ export const emptyCellStyle: CSSProperties = {
   textAlign: "center",
   color: "var(--muted, #64748b)",
 };
+
+

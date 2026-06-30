@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { Theme } from "@/lib/theme";
+import type { Theme } from "@/hooks/theme";
 
 export const tooltipStyle = (theme: Theme): CSSProperties => ({
   background: theme.surface,
@@ -22,3 +22,5 @@ export const tooltipValueStyle = (color: string): CSSProperties => ({
   fontWeight: 600,
   color,
 });
+
+

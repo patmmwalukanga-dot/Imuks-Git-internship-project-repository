@@ -1,4 +1,4 @@
-import type { Theme } from "./theme";
+import type { Theme } from "@/hooks/theme";
 
 export const avg = (arr: number[]) =>
   arr.length ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : 0;
@@ -340,3 +340,6 @@ export const createGlobalStyles = (theme: Theme) => `
     to { transform: rotate(360deg); }
   }
 `;
+
+
+

@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { Theme } from "@/lib/theme";
+import type { Theme } from "@/hooks/theme";
 
 export const alertBoxStyle = (theme: Theme): CSSProperties => ({
   background: `${theme.rose}10`,
@@ -20,3 +20,5 @@ export const alertBodyStyle: CSSProperties = {
   fontSize: 13,
   opacity: 0.9,
 };
+
+

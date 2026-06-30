@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { darkTheme, lightTheme } from "@/lib/theme";
+import { darkTheme, lightTheme } from "@/hooks/theme";
 
 export const useTheme = () => {
   const [isDark, setIsDark] = useState(false);
@@ -25,3 +25,4 @@ export const useTheme = () => {
 
   return { isDark, theme, toggleTheme };
 };
+

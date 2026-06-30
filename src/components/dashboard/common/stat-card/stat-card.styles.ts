@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { Theme } from "@/lib/theme";
+import type { Theme } from "@/hooks/theme";
 
 export const statCardAccentStyle = (accentColor: string): CSSProperties => ({
   position: "absolute",
@@ -22,3 +22,5 @@ export const trendMutedStyle = (theme: Theme): CSSProperties => ({
   color: theme.muted,
   fontWeight: 500,
 });
+
+

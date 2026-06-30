@@ -7,3 +7,5 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     <StoreContext.Provider value={rootStore}>{children}</StoreContext.Provider>
   );
 }
+
+

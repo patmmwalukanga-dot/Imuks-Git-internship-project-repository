@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { Theme } from "@/lib/theme";
+import type { Theme } from "@/hooks/theme";
 
 export const reportsLayoutStyle: CSSProperties = {
   display: "grid",
@@ -42,3 +42,5 @@ export const breakdownValueStyle: CSSProperties = {
   fontSize: 22,
   fontWeight: 700,
 };
+
+
