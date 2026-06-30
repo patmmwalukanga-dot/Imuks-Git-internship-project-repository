@@ -25,10 +25,17 @@ interface RegistrationEntry {
 
 export default function Register() {
   // --- STATE ---
-  const [entries, setEntries] = useState<RegistrationEntry[]>([]);
+  const [entries, setEntries] = useState<RegistrationEntry[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const saved = localStorage.getItem('registrationEntries');
+      return saved ? (JSON.parse(saved) as RegistrationEntry[]) : [];
+    } catch {
+      return [];
+    }
+  });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'student' | 'staff'>('all');
   const [selectedType, setSelectedType] = useState<PersonType>('student');
@@ -52,14 +59,13 @@ export default function Register() {
 
   // --- EFFECTS ---
   useEffect(() => {
-    const saved = localStorage.getItem('registrationEntries');
-    if (saved) setEntries(JSON.parse(saved));
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (mounted) localStorage.setItem('registrationEntries', JSON.stringify(entries));
-  }, [entries, mounted]);
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem('registrationEntries', JSON.stringify(entries));
+    } catch {
+      // ignore storage errors (e.g., quota exceeded or private mode)
+    }
+  }, [entries]);
 
   // --- LOGIC ---
   const getStats = () => ({
@@ -94,8 +100,6 @@ export default function Register() {
     e.preventDefault();
     if (!validate()) return;
 
-    setIsLoading(true);
-
     if (editingId) {
       setEntries(entries.map(ent => ent.id === editingId ? { ...ent, ...formData } : ent));
       setEditingId(null);
@@ -109,7 +113,6 @@ export default function Register() {
       setEntries([...entries, newEntry]);
     }
     resetForm();
-    setIsLoading(false);
   };
 
   const resetForm = () => {
@@ -118,23 +121,25 @@ export default function Register() {
 
   const handleDelete = (id: string) => setEntries(entries.filter(e => e.id !== id));
 
-  const handleTypeChange = (type: PersonType) => {
+  // --- RENDER ---
+
+  function handleTypeChange(type: PersonType): void {
     setSelectedType(type);
     setFormData((prev) => ({ ...prev, type }));
-  };
+  }
 
-  const handleCancelEdit = () => {
+  function handleCancelEdit(_event: React.MouseEvent<HTMLButtonElement>): void {
     setEditingId(null);
     resetForm();
-  };
+  }
 
-  const getInitials = (firstName: string, lastName: string) => {
-    const first = firstName.charAt(0).toUpperCase();
-    const last = lastName.charAt(0).toUpperCase();
-    return `${first}${last}`;
-  };
+  function getInitials(firstName: string, lastName: string): string {
+    const firstInitial = firstName.charAt(0).toUpperCase();
+    const lastInitial = lastName.charAt(0).toUpperCase();
+    return `${firstInitial}${lastInitial}`;
+  }
 
-  const getBadge = (status: RegistrationEntry['status']) => {
+  function getBadge(status: string): string {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-700';
@@ -145,11 +150,12 @@ export default function Register() {
       default:
         return 'bg-gray-100 text-gray-600';
     }
-  };
+  }
 
-  const handleEdit = (id: string) => {
+  function handleEdit(id: string): void {
     const entry = entries.find((e) => e.id === id);
     if (!entry) return;
+    setIsLoading(true);
     setFormData({
       type: entry.type,
       firstName: entry.firstName,
@@ -166,10 +172,8 @@ export default function Register() {
     });
     setSelectedType(entry.type);
     setEditingId(id);
-  };
-
-  // --- RENDER ---
-  if (!mounted) return null;
+    setIsLoading(false);
+  }
 
   return (
     <div className="min-h-screen bg-[#E8F5E9]">
