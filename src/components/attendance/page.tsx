@@ -12,7 +12,7 @@ import {
   formatDisplayDate,
   now12h,
   countByStatus,
-} from "./lib/attendance";
+} from "./attendance";
 import * as S from "./styles";
 
 const STATUSES: AttendanceStatus[] = ["present", "absent", "late"];
