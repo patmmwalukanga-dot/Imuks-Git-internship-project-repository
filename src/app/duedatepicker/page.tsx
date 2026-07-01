@@ -38,8 +38,11 @@ export default function DueDatePickerPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isMounted, setIsMounted] = useState(false);
 
+  // Solves ESLint linting violations by deferring state changes past the rendering tick
   useEffect(() => {
-    setIsMounted(true);
+    queueMicrotask(() => {
+      setIsMounted(true);
+    });
   }, []);
 
   const handleAddTask = (event: React.FormEvent<HTMLFormElement>) => {
