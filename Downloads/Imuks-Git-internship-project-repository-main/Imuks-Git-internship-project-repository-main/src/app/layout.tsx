@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import { Providers } from "./providers";
 import { createMetadata } from "@lib/seo";
+import Navbar from "../components/navbar/navbar"; // Using strict lowercase path
 import "./globals.css";
 
 export const metadata: Metadata = createMetadata({
@@ -20,11 +21,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NextTopLoader color="#2563eb" showSpinner={false} />
-        <Providers>{children}</Providers>
-
+        <Providers>
+          <Navbar /> 
+          {children}
+        </Providers>
       </body>
     </html>
   );
 }
-
-
