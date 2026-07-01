@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
@@ -31,19 +32,12 @@ const formatDisplayDate = (value: string) => {
   return `${day}/${month}/${year}`;
 };
 
-export default function DueDatePickerPage() {
+// Main functional component containing layout and task logic
+function DueDatePickerWorkspace() {
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Solves ESLint linting violations by deferring state changes past the rendering tick
-  useEffect(() => {
-    queueMicrotask(() => {
-      setIsMounted(true);
-    });
-  }, []);
 
   const handleAddTask = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -78,14 +72,6 @@ export default function DueDatePickerPage() {
     setErrorMessage("");
   };
 
-  if (!isMounted) {
-    return (
-      <AppShell>
-        <Typography variant="body1" color="text.secondary">Loading...</Typography>
-      </AppShell>
-    );
-  }
-
   return (
     <AppShell>
       <Stack spacing={4}>
@@ -94,10 +80,10 @@ export default function DueDatePickerPage() {
           elevation={0}
           sx={{
             border: "1px solid",
-            borderColor: "#01381e", // Custom deep green border
+            borderColor: "#01381e",
             borderRadius: 2,
             p: 3,
-            backgroundColor: "#Dee2b115", // 15% opacity of your cream color for a soft tint
+            backgroundColor: "#Dee2b115",
           }}
         >
           <Stack spacing={3}>
@@ -112,10 +98,10 @@ export default function DueDatePickerPage() {
                 fullWidth
                 sx={{
                   "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#01381e", // Changes active outline to deep green
+                    borderColor: "#01381e",
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "#01381e", // Changes active label to deep green
+                    color: "#01381e",
                   },
                 }}
               />
@@ -128,15 +114,13 @@ export default function DueDatePickerPage() {
                   {errorMessage}
                 </Typography>
               )}
-              
-              {/* Custom Branded Button */}
               <AppButton 
                 type="submit"
                 sx={{
                   backgroundColor: "#01381e",
-                  color: "#Dee2b1", // Cream text on dark green background
+                  color: "#Dee2b1",
                   "&:hover": {
-                    backgroundColor: "#012a16", // Slightly darker green on hover
+                    backgroundColor: "#012a16",
                   }
                 }}
               >
@@ -172,10 +156,10 @@ export default function DueDatePickerPage() {
                     elevation={0}
                     sx={{
                       border: "1px solid",
-                      borderColor: "#Dee2b1", // Soft cream accent border for each item
+                      borderColor: "#Dee2b1",
                       borderRadius: 2,
                       p: 2,
-                      backgroundColor: "#Dee2b130", // Light cream background fill
+                      backgroundColor: "#Dee2b130",
                     }}
                   >
                     <Stack
@@ -201,3 +185,13 @@ export default function DueDatePickerPage() {
     </AppShell>
   );
 }
+
+// Disables Server Side Rendering entirely for this file to bypass hydration errors and make ESLint pass
+export default dynamic(() => Promise.resolve(DueDatePickerWorkspace), {
+  ssr: false,
+  loading: () => (
+    <AppShell>
+      <Typography variant="body1" color="text.secondary">Loading...</Typography>
+    </AppShell>
+  ),
+});
