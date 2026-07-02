@@ -1,10 +1,15 @@
 // src/app/page.tsx
 import Register from '../components/register/register'; // Ensure this matches actual folder casing
 
-export default function Home() {
+//Importing tasks
+import { TaskList } from "@/components/tasks";
+
+export default function HomePage() {
   return (
-    <main>
-      <Register />
-    </main>
+    <AppShell>
+      <DashboardOverview />
+      <TaskList />
+    </AppShell>
+    
   );
 }
