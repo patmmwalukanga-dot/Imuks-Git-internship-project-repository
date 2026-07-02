@@ -32,3 +32,4 @@ Thumbs.db
 # Editor
 .idea/
 .vscode/
+.vercel
