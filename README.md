@@ -6,7 +6,6 @@ To maintain a clean and scalable codebase, please follow the folder structure be
 
 ```text
 src/
-apps
 └── components/
     ├── authentication/
     │   ├── login/
@@ -18,8 +17,4 @@ apps
         ├── button/
         └── bavbar/
 ```
-Make sure your projects folders and files are in small letters NOT capital letters
----
-ATTENTION ⚠️
----
-DO NOT PUSH YOUR PROJECT TO THE MAIN BRANCH, MAKE YOUR OWN BRANCH TO THE REPOSITORY AND MAKE A PR(PULL REQUEST), IF NOT FOLLOWED YOUR PROJECT WILL BE REJECTED, YOUR FILES WILL BE DELETED AND YOU WILL BE ASKED TO DO IT THE CORRECT WAY.
+Make sure your projects folders and files are in small letters NOT capital letters 
