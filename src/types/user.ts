@@ -3,3 +3,11 @@ export type UserProfile = {
   name: string;
   email: string;
 };
+
+export type User = {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  status?: string;
+};
