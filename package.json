@@ -22,6 +22,7 @@
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
     "@mui/material-nextjs": "^7.3.5",
+    "@supabase/supabase-js": "^2.108.2",
     "html2canvas": "^1.4.1",
     "chart.js": "^4.5.1",
     "i18next": "^25.6.3",
