@@ -1,30 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { observer } from "mobx-react-lite";
-import { TaskStore } from "./store";
-import { fireConfetti } from "./confetti";
+import { useTaskLogic } from "./hooks";
 
 export const TaskList = observer(function TaskList() {
-  const [taskStore] = useState(() => new TaskStore());
-
-  const handleToggle = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    taskId: string
-  ) => {
-    const willBeCompleted = e.target.checked;
-    taskStore.toggleComplete(taskId);
-
-    if (willBeCompleted) {
-      const rect = e.target.getBoundingClientRect();
-      fireConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    }
-  };
+  const { taskStore, handleToggle } = useTaskLogic();
 
   return (
     <Stack spacing={1.5}>
@@ -36,12 +20,11 @@ export const TaskList = observer(function TaskList() {
           key={task.id}
           elevation={0}
           sx={{
-            backgroundColor: "#ffffff",
-            border: "1px solid #eef0e2",
+            backgroundColor: task.completed ? "#dee2b1" : "#ffffff",
+            border: "1px solid #dee2b1",
             borderRadius: 3,
             p: 2.5,
-            opacity: task.completed ? 0.6 : 1,
-            transition: "opacity 0.2s ease",
+            transition: "all 0.2s ease",
           }}
         >
           <Stack direction="row" spacing={1.5} alignItems="flex-start">
@@ -61,12 +44,19 @@ export const TaskList = observer(function TaskList() {
                   fontWeight: 700,
                   fontSize: "1.1rem",
                   textDecoration: task.completed ? "line-through" : "none",
+                  opacity: task.completed ? 0.6 : 1,
                 }}
               >
                 {task.title}
               </Typography>
               {task.description && (
-                <Typography sx={{ color: "#dee2b1", fontSize: "0.95rem" }}>
+                <Typography
+                  sx={{
+                    color: "#01381e",
+                    fontSize: "0.95rem",
+                    opacity: 0.7,
+                  }}
+                >
                   {task.description}
                 </Typography>
               )}

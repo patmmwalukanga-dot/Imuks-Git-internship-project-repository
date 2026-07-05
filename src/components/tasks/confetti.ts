@@ -18,7 +18,7 @@ export function fireConfetti(originX: number, originY: number) {
     return;
   }
 
-  const colors = ["#dee2b1", "#01381e", "#ffffff"];
+  const colors = ["#e2ee59", "#e73509", "#0e4af0"];
   const particleCount = 40;
 
   const particles = Array.from({ length: particleCount }, () => ({
