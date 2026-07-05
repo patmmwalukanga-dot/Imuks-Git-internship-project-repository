@@ -21,7 +21,10 @@ export default function RootLayout({
       <body>
         <NextTopLoader color="#2563eb" showSpinner={false} />
         <Providers>{children}</Providers>
+
       </body>
     </html>
   );
 }
+
+

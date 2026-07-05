@@ -10,3 +10,5 @@ export type HealthResponse = {
 export function getHealth() {
   return apiClient<HealthResponse>(appLinks.api.health);
 }
+
+

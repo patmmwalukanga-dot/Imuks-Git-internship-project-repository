@@ -6,3 +6,5 @@ export function withLocaleHeader(request: NextRequest, response: NextResponse) {
   response.headers.set("x-app-locale", locale);
   return response;
 }
+
+
