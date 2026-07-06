@@ -18,33 +18,27 @@ import {
 import { AlertTriangle, Calendar, TrendingUp, Users } from "lucide-react";
 import CustomTooltip from "@/components/dashboard/common/custom-tooltip";
 import StatCard from "@/components/dashboard/common/stat-card";
-import { avg, gradeInfo, groupBy } from "@/components/dashboard/dashboard-utils";
-import type { Theme } from "@/hooks/theme";
-import type { DashboardData } from "@/types/dashboard";
+import { gradeInfo } from "@/components/dashboard/dashboard-utils";
 import {
   alertBodyStyle,
   alertBoxStyle,
   alertIconWrapStyle,
   alertTitleStyle,
 } from "./overview.styles";
+import { useOverviewData } from "./overview.hooks";
+import type { OverviewProps } from "./overview.types";
 
-export default function Overview({ data, theme }: { data: DashboardData; theme: Theme }) {
-  const { students, attendanceHistory } = data;
-  const avgGrade = avg(students.map((student) => student.grade ?? 0));
-  const avgAtt = avg(students.map((student) => student.attendance ?? 0));
-  const classes = [...new Set(students.map((student) => student.class))].length;
-  const atRisk = students.filter((student) => (student.attendance ?? 0) < 75);
-
-  const byClass = Object.entries(groupBy(students, "class")).map(([cls, list]) => ({
-    name: cls,
-    grade: avg(list.map((student) => student.grade ?? 0)),
-    attendance: avg(list.map((student) => student.attendance ?? 0)),
-  }));
-
-  const subjectData = Object.entries(groupBy(students, "subject")).map(([subject, list]) => ({
-    name: subject,
-    value: avg(list.map((student) => student.grade ?? 0)),
-  }));
+export default function Overview({ data, theme }: OverviewProps) {
+  const {
+    students,
+    attendanceHistory,
+    avgGrade,
+    avgAtt,
+    classes,
+    atRisk,
+    byClass,
+    subjectData,
+  } = useOverviewData(data);
 
   return (
     <div className="fade-up">

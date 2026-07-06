@@ -1,12 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import DataTable from "@/components/dashboard/common/data-table";
-import type { Student } from "@/types/dashboard";
 import {
-  gradeCellStyle,
-  gradeInputStyle,
-  gradeValueStyle,
   gradesLayoutStyle,
   statsListStyle,
   statsRowStyle,
@@ -15,113 +10,21 @@ import {
   toolbarActionsStyle,
   toolbarRowStyle,
 } from "./grades-view.styles";
-
-const STORAGE_KEY = "students-data";
+import { useGradesViewData } from "./grades-view.hooks";
 
 export default function GradesView() {
-  const [students, setStudents] = useState<Student[]>([]);
-  const [subject, setSubject] = useState("Mathematics");
-  const [grades, setGrades] = useState<Record<string, number>>({});
-
-  useEffect(() => {
-    queueMicrotask(() => {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      try {
-        const parsed = raw ? JSON.parse(raw) : null;
-        if (parsed && Array.isArray(parsed) && parsed.length) {
-          setStudents(parsed);
-        } else if (window.__MOCK_DATA__?.students) {
-          setStudents(window.__MOCK_DATA__.students);
-        }
-      } catch {
-        if (window.__MOCK_DATA__?.students) {
-          setStudents(window.__MOCK_DATA__.students);
-        }
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    queueMicrotask(() => {
-      setGrades((prev) => {
-        const next = { ...prev };
-        students.forEach((student) => {
-          const id = String(student.id);
-          if (next[id] == null) {
-            next[id] = student.grade ?? 0;
-          }
-        });
-        return next;
-      });
-    });
-  }, [students]);
-
-  const subjects = useMemo(
-    () => [...new Set(students.map((student) => student.subject || subject))],
-    [students, subject],
-  );
-
-  const saveGrade = (id: string, value: string) => {
-    const numeric = Number(value);
-    if (Number.isNaN(numeric) || numeric < 0 || numeric > 100) {
-      alert("Enter 0-100");
-      return;
-    }
-    setGrades((prev) => ({ ...prev, [id]: numeric }));
-  };
-
-  const columns = [
-    { key: "name", label: "Student" },
-    { key: "class", label: "Class" },
-    { key: "subject", label: "Subject" },
-    {
-      key: "grade",
-      label: "Grade",
-      render: (_: unknown, row: Student) => {
-        const id = String(row.id);
-        return (
-          <div style={gradeCellStyle}>
-            <input
-              style={gradeInputStyle}
-              defaultValue={grades[id] ?? row.grade ?? 0}
-              onBlur={(event) => saveGrade(id, event.target.value)}
-            />
-            <div style={gradeValueStyle}>
-              {grades[id] ?? row.grade ?? 0}%
-            </div>
-          </div>
-        );
-      },
-    },
-  ];
-
-  const exportCSV = (rows: Student[]) => {
-    if (!rows.length) {
-      alert("No rows");
-      return;
-    }
-
-    const body = rows
-      .map((row) => {
-        const id = String(row.id);
-        return `${row.name},${row.class},${row.subject ?? ""},${grades[id] ?? row.grade ?? ""}`;
-      })
-      .join("\n");
-
-    const blob = new Blob([`Name,Class,Subject,Grade\n${body}`], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "grades.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const avgGrade = useMemo(() => {
-    const values = students.map((student) => grades[String(student.id)] ?? student.grade ?? 0);
-    if (!values.length) return 0;
-    return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
-  }, [grades, students]);
+  const {
+    students,
+    subject,
+    setSubject,
+    subjects,
+    columns,
+    exportCSV,
+    avgGrade,
+    topGrade,
+    lowestGrade,
+    handleUpload,
+  } = useGradesViewData();
 
   return (
     <div className="fade-up">
@@ -138,7 +41,7 @@ export default function GradesView() {
                 ))}
               </select>
               <div style={toolbarActionsStyle}>
-                <button className="btn-icon" onClick={() => alert("Bulk upload not implemented")}>Upload</button>
+                <button className="btn-icon" onClick={handleUpload}>Upload</button>
                 <button className="btn-primary" onClick={() => exportCSV(students)}>
                   Export Grades
                 </button>
@@ -158,11 +61,11 @@ export default function GradesView() {
             <div style={statsListStyle}>
               <div style={statsRowStyle}>
                 <div>Top</div>
-                <div>{Math.max(...Object.values(grades).length ? Object.values(grades) : [0])}%</div>
+                <div>{topGrade}%</div>
               </div>
               <div style={statsRowStyle}>
                 <div>Lowest</div>
-                <div>{Math.min(...Object.values(grades).length ? Object.values(grades) : [0])}%</div>
+                <div>{lowestGrade}%</div>
               </div>
             </div>
           </div>
@@ -171,5 +74,3 @@ export default function GradesView() {
     </div>
   );
 }
-
-
