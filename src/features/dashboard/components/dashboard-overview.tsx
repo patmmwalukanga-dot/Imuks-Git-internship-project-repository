@@ -20,7 +20,7 @@ export const DashboardOverview = observer(function DashboardOverview() {
 ]);
 
 const [selectedId, setSelectedId] = useState<number | null>(null);
-const [loading, setLoading] = useState(false);
+const [, setLoading] = useState(false);
    const [openDelete, setOpenDelete] = useState(false);
    const handleDelete = async () => {
   setLoading(true);
