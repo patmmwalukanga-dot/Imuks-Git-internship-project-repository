@@ -10,5 +10,3 @@ describe("AppButton", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 });
-
-
