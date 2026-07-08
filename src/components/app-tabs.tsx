@@ -1,6 +1,9 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useColorScheme } from 'react-native';
 
+import homeIcon from '@/assets/images/tabIcons/home.png';
+import exploreIcon from '@/assets/images/tabIcons/explore.png';
+
 import { Colors } from '@/constants/theme';
 
 export default function AppTabs() {
@@ -15,7 +18,7 @@ export default function AppTabs() {
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
+          src={homeIcon}
           renderingMode="template"
         />
       </NativeTabs.Trigger>
@@ -23,7 +26,7 @@ export default function AppTabs() {
       <NativeTabs.Trigger name="explore">
         <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
+          src={exploreIcon}
           renderingMode="template"
         />
       </NativeTabs.Trigger>
