@@ -4,11 +4,10 @@
 // Install: npm install react-native-linear-gradient
 //          npx pod-install  (iOS)
 
-import React, { useRef } from "react";
+import React from 'react';
 import {
   Dimensions,
   Image,
-  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -16,25 +15,27 @@ import {
   StyleSheet,
   Text,
   View,
-} from "react-native";
+} from 'react-native';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+import LinearGradient from 'react-native-linear-gradient';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // ─── Design tokens (mirrored from the original Tailwind theme) ───────────────
 const C = {
-  primary: "#00200f",
-  onPrimary: "#ffffff",
-  primaryContainer: "#01381e",
-  onPrimaryContainer: "#70a380",
-  secondaryContainer: "#dfe3b2",
-  onSecondaryContainer: "#61663e",
-  secondaryFixed: "#e2e6b5",
-  surface: "#fafaf4",
-  onSurface: "#1a1c19",
-  onSurfaceVariant: "#414942",
-  outlineVariant: "#c0c9c0",
-  heroTop: "#01381e",
-  heroBottom: "#00200f",
+  primary: '#00200f',
+  onPrimary: '#ffffff',
+  primaryContainer: '#01381e',
+  onPrimaryContainer: '#70a380',
+  secondaryContainer: '#dfe3b2',
+  onSecondaryContainer: '#61663e',
+  secondaryFixed: '#e2e6b5',
+  surface: '#fafaf4',
+  onSurface: '#1a1c19',
+  onSurfaceVariant: '#414942',
+  outlineVariant: '#c0c9c0',
+  heroTop: '#01381e',
+  heroBottom: '#00200f',
 } as const;
 
 const SP = {
@@ -46,24 +47,7 @@ const SP = {
   xxl: 80,
 } as const;
 
-// ─── Hero gradient (LinearGradient or plain View fallback) ───────────────────
-let LinearGradient: React.ComponentType<{
-  colors: string[];
-  style?: object;
-  children?: React.ReactNode;
-}>;
-
-try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  LinearGradient = require("react-native-linear-gradient").default;
-} catch {
-  // Fallback: solid dark-green background if package not installed
-  LinearGradient = ({ colors, style, children }) => (
-    <View style={[{ backgroundColor: colors[0] }, style]}>{children}</View>
-  );
-}
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
+// ─── Sub-components ────────────────────────────────────────────────────────[...]
 
 function Header() {
   return (
@@ -102,7 +86,8 @@ function HeroSection() {
 
       {/* Headline */}
       <Text style={styles.heroHeadline}>
-        Stay Ahead of{"\n"}the Curve
+        Stay Ahead of{'
+'}the Curve
       </Text>
 
       {/* Body */}
@@ -128,7 +113,7 @@ function HeroSection() {
       <View style={styles.heroImageWrapper}>
         <Image
           source={{
-            uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuCNVazjBf5XSqeK3VY0_NKHn7hHcZ2NN-mq7gKMQZDZgx_nBtZR0kSVYKAEsBGzRSGtEykQXiUPjMKsG2CDmP01Q9UgA0Mtek7OvDoxlp-l7MaYPvpr0Wf4oZuagp7akfX2tklKUOFtwNnTW8hRfE54c0JRPluBu57c-tgzsobSsf92opfwwvQpitZkriUC35regjLOMlIiEHI0rAy01C1O6mI-87Fe_I-RZgGWTdiv0cid5NpBN7PT7iVQAAdv-k3RJFPFSEXrYsNi",
+            uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNVazjBf5XSqeK3VY0_NKHn7hHcZ2NN-mq7gKMQZDZgx_nBtZR0kSVYKAEsBGzRSGtEykQXiUPjMKsG2CDmP01Q9UgA0Mtek7OvDoxlp-l7MaYPvpr0Wf4oZuagp7',
           }}
           style={styles.heroImage}
           resizeMode="cover"
@@ -158,22 +143,22 @@ function FeatureCard({ emoji, title, description }: FeatureCardProps) {
 function FeaturesSection() {
   const features: FeatureCardProps[] = [
     {
-      emoji: "📊",
-      title: "Grade Management",
+      emoji: '📊',
+      title: 'Grade Management',
       description:
-        "Track weighted averages across all semesters. Predictive analytics tell you exactly what you need on that final exam.",
+        'Track weighted averages across all semesters. Predictive analytics tell you exactly what you need on that final exam.',
     },
     {
-      emoji: "📅",
-      title: "Smart Scheduling",
+      emoji: '📅',
+      title: 'Smart Scheduling',
       description:
-        "Sync your syllabus with a dynamic calendar that flags overlapping deadlines and carves out optimal study blocks.",
+        'Sync your syllabus with a dynamic calendar that flags overlapping deadlines and carves out optimal study blocks.',
     },
     {
-      emoji: "⚡",
-      title: "Task Priority",
+      emoji: '⚡',
+      title: 'Task Priority',
       description:
-        "AI-driven prioritization based on due dates, project weight, and your historical productivity patterns.",
+        'AI-driven prioritization based on due dates, project weight, and your historical productivity patterns.',
     },
   ];
 
@@ -197,10 +182,10 @@ function FeaturesSection() {
 }
 
 const FOOTER_LINKS = [
-  "Privacy Policy",
-  "Terms of Service",
-  "Help Center",
-  "Contact Us",
+  'Privacy Policy',
+  'Terms of Service',
+  'Help Center',
+  'Contact Us',
 ];
 
 function Footer() {
@@ -234,7 +219,7 @@ function Footer() {
   );
 }
 
-// ─── Root screen ─────────────────────────────────────────────────────────────
+// ─── Root screen ────────────────────────────────────────────────────────[...]
 
 export default function LandingPage() {
   return (
@@ -261,7 +246,7 @@ export default function LandingPage() {
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
+// ─── Styles ──────────────────────────────────────────────────────────[...]
 
 const styles = StyleSheet.create({
   root: {
@@ -271,9 +256,9 @@ const styles = StyleSheet.create({
 
   // ── Header
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: C.surface,
     paddingHorizontal: SP.sm,
     paddingVertical: SP.sm,
@@ -281,7 +266,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       android: { elevation: 4 },
       ios: {
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.06,
         shadowRadius: 4,
@@ -289,15 +274,15 @@ const styles = StyleSheet.create({
     }),
   },
   brandRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
   },
   brandIcon: {
     fontSize: 22,
   },
   brandName: {
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 22,
     color: C.primary,
     letterSpacing: -0.3,
@@ -310,7 +295,7 @@ const styles = StyleSheet.create({
   },
   getStartedLabel: {
     color: C.onPrimary,
-    fontWeight: "600",
+    fontWeight: '600',
     fontSize: 13,
     letterSpacing: 0.6,
   },
@@ -328,11 +313,11 @@ const styles = StyleSheet.create({
     paddingTop: SP.xxl,
     paddingBottom: SP.xxl,
     paddingHorizontal: SP.sm,
-    alignItems: "center",
+    alignItems: 'center',
   },
   eyebrowRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
     marginBottom: SP.sm,
   },
@@ -343,14 +328,14 @@ const styles = StyleSheet.create({
   eyebrowText: {
     color: C.secondaryFixed,
     fontSize: 11,
-    fontWeight: "500",
+    fontWeight: '500',
     letterSpacing: 1.2,
   },
   heroHeadline: {
     fontSize: 36,
-    fontWeight: "700",
-    color: "#ffffff",
-    textAlign: "center",
+    fontWeight: '700',
+    color: '#ffffff',
+    textAlign: 'center',
     lineHeight: 44,
     letterSpacing: -0.8,
     marginBottom: SP.sm,
@@ -358,7 +343,7 @@ const styles = StyleSheet.create({
   heroBody: {
     fontSize: 16,
     color: C.onPrimaryContainer,
-    textAlign: "center",
+    textAlign: 'center',
     lineHeight: 24,
     maxWidth: 320,
     marginBottom: SP.lg,
@@ -373,7 +358,7 @@ const styles = StyleSheet.create({
   },
   ctaLabel: {
     color: C.onSecondaryContainer,
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 14,
     letterSpacing: 0.6,
   },
@@ -382,17 +367,17 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.97 }],
   },
   heroImageWrapper: {
-    width: "100%",
+    width: '100%',
     maxWidth: 420,
     height: 220,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: 12,
-    overflow: "hidden",
+    overflow: 'hidden',
     marginTop: SP.sm,
     ...Platform.select({
       android: { elevation: 8 },
       ios: {
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 0.25,
         shadowRadius: 10,
@@ -400,9 +385,9 @@ const styles = StyleSheet.create({
     }),
   },
   heroImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
 
   // ── Features
@@ -413,23 +398,23 @@ const styles = StyleSheet.create({
   },
   featuresSectionTitle: {
     fontSize: 26,
-    fontWeight: "700",
+    fontWeight: '700',
     color: C.primary,
-    textAlign: "center",
+    textAlign: 'center',
     letterSpacing: -0.4,
     marginBottom: SP.xs,
   },
   featuresSectionSubtitle: {
     fontSize: 14,
     color: C.onSurfaceVariant,
-    textAlign: "center",
+    textAlign: 'center',
     lineHeight: 20,
     marginBottom: SP.lg,
     maxWidth: 300,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
   featureCard: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderRadius: 10,
     padding: SP.md,
     marginBottom: SP.sm,
@@ -442,7 +427,7 @@ const styles = StyleSheet.create({
   },
   featureTitle: {
     fontSize: 17,
-    fontWeight: "600",
+    fontWeight: '600',
     color: C.primary,
     marginBottom: 4,
   },
@@ -458,45 +443,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: SP.sm,
     paddingBottom: SP.xxl,
     paddingTop: SP.lg,
-    alignItems: "center",
+    alignItems: 'center',
   },
   footerDivider: {
     height: 1,
     backgroundColor: C.outlineVariant,
-    width: "100%",
+    width: '100%',
     marginBottom: SP.lg,
     opacity: 0.4,
   },
   footerBrand: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
     marginBottom: SP.xs,
   },
   footerTagline: {
     fontSize: 13,
     color: C.onSurfaceVariant,
-    textAlign: "center",
+    textAlign: 'center',
     lineHeight: 18,
     maxWidth: 260,
     marginBottom: SP.md,
   },
   footerLinks: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
     gap: SP.sm,
     marginBottom: SP.md,
   },
   footerLink: {
     fontSize: 13,
     color: C.onSurfaceVariant,
-    textDecorationLine: "underline",
+    textDecorationLine: 'underline',
   },
   copyright: {
     fontSize: 12,
     color: C.onSurfaceVariant,
-    textAlign: "center",
+    textAlign: 'center',
     opacity: 0.7,
   },
 });
