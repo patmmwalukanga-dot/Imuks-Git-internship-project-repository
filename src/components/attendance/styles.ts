@@ -1,6 +1,29 @@
 "use client";
 
 import styled, { css, keyframes } from "styled-components";
+import type { AttendanceStatus, BadgeConfig } from "./types";
+
+/* ---------- theme tokens & visual constants ---------- */
+
+export const AVATAR_COLORS = ["#15803d", "#0f766e", "#166534", "#047857", "#16a34a"];
+
+export const BADGE_CONFIG: Record<AttendanceStatus, BadgeConfig> = {
+  present: { bg: "#d1fae5", color: "#047857", dot: "#10b981", label: "Present" },
+  absent: { bg: "#fee2e2", color: "#dc2626", dot: "#ef4444", label: "Absent" },
+  late: { bg: "#fef3c7", color: "#b45309", dot: "#fbbf24", label: "Late" },
+};
+
+export const STATUS_ICONS: Record<AttendanceStatus, string> = {
+  present: "✓",
+  absent: "✕",
+  late: "⏱",
+};
+
+const statusActiveColors: Record<AttendanceStatus, string> = {
+  present: "#10b981",
+  absent: "#ef4444",
+  late: "#fbbf24",
+};
 
 /* ---------- theme helpers ---------- */
 // Pass `$dark` as a boolean prop to any styled component that needs to branch on dark mode.
@@ -451,12 +474,6 @@ export const StatusButtons = styled.div`
   gap: 0.375rem;
 `;
 
-const statusActiveColors: Record<string, string> = {
-  present: "#10b981",
-  absent: "#ef4444",
-  late: "#fbbf24",
-};
-
 export const StatusButton = styled.button<{
   $status: "present" | "absent" | "late";
   $active: boolean;
@@ -637,6 +654,10 @@ export const AvatarCircle = styled.div<{ $bg: string }>`
 `;
 
 /* ---------- history tab ---------- */
+
+export const HistoryHeader = styled.div`
+  margin-bottom: 1.5rem;
+`;
 
 export const EmptyHistory = styled.div<{ $dark: boolean }>`
   border-radius: 1rem;
