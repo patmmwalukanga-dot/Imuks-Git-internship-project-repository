@@ -1,198 +1,47 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import styled from 'styled-components'
+import { RecordModalProps } from './types'
+import { useRecordModal } from './hooks'
+import {
+  Overlay,
+  Modal,
+  ModalHeader,
+  ModalTitle,
+  CloseButton,
+  Grid,
+  FormGroup,
+  Label,
+  Input,
+  Select,
+  Textarea,
+  ErrorText,
+  Footer,
+  CancelButton,
+  SaveButton,
+} from './styles'
+import {
+  MODAL_TITLE_EDIT,
+  MODAL_TITLE_ADD,
+  CLOSE_ICON,
+  FIELD_LABEL_NAME,
+  FIELD_LABEL_CATEGORY,
+  FIELD_LABEL_DESCRIPTION,
+  FIELD_LABEL_STATUS,
+  FIELD_LABEL_ROLE,
+  FIELD_LABEL_EMAIL,
+  PLACEHOLDER_NAME,
+  PLACEHOLDER_DESCRIPTION,
+  PLACEHOLDER_EMAIL,
+  BUTTON_CANCEL,
+  BUTTON_SAVE_ASSET,
+} from './constants'
 
-type Record = {
-  id?: string
-  name: string
-  category: string
-  description: string
-  status: string
-  role: string
-  email: string
-}
-
-type Props = {
-  isOpen: boolean
-  onClose: () => void
-  onSave: (record: Record) => void
-  editRecord?: Record | null
-}
-
-const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-`
-
-const Modal = styled.div`
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #d0dcc8;
-  padding: 24px;
-  width: 100%;
-  max-width: 440px;
-  margin: 0 16px;
-`
-
-const ModalHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-`
-
-const ModalTitle = styled.h2`
-  font-size: 15px;
-  font-weight: 500;
-  color: #1a3a2a;
-  margin: 0;
-`
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: #7a9070;
-  cursor: pointer;
-  &:hover { color: #1a3a2a; }
-`
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
-`
-
-const FormGroup = styled.div`
-  margin-bottom: 12px;
-`
-
-const Label = styled.label`
-  font-size: 11px;
-  color: #7a9070;
-  display: block;
-  margin-bottom: 4px;
-`
-
-const Input = styled.input<{ $error?: boolean }>`
-  width: 100%;
-  border: 1px solid ${p => p.$error ? '#ef4444' : '#d0dcc8'};
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 13px;
-  background: #f4f7f0;
-  color: #1a3a2a;
-  outline: none;
-  box-sizing: border-box;
-  &:focus { border-color: #1a3a2a; }
-`
-
-const Select = styled.select`
-  width: 100%;
-  border: 1px solid #d0dcc8;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 13px;
-  background: #f4f7f0;
-  color: #1a3a2a;
-  outline: none;
-  box-sizing: border-box;
-`
-
-const Textarea = styled.textarea<{ $error?: boolean }>`
-  width: 100%;
-  border: 1px solid ${p => p.$error ? '#ef4444' : '#d0dcc8'};
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 13px;
-  background: #f4f7f0;
-  color: #1a3a2a;
-  outline: none;
-  resize: none;
-  box-sizing: border-box;
-`
-
-const ErrorText = styled.p`
-  font-size: 11px;
-  color: #ef4444;
-  margin: 4px 0 0;
-`
-
-const Footer = styled.div`
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 20px;
-`
-
-const CancelButton = styled.button`
-  border: 1px solid #d0dcc8;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 13px;
-  color: #7a9070;
-  background: none;
-  cursor: pointer;
-  &:hover { background: #f4f7f0; }
-`
-
-const SaveButton = styled.button`
-  background: #1a3a2a;
-  color: #c8d96a;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 20px;
-  font-size: 13px;
-  cursor: pointer;
-  &:hover { opacity: 0.9; }
-`
-
-export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Props) {
-  const [form, setForm] = useState<Record>({
-    name: '', category: 'Security', description: '',
-    status: 'Active', role: 'Viewer', email: ''
+export default function RecordModal({ isOpen, onClose, onSave, editRecord }: RecordModalProps) {
+  const { form, setForm, errors, handleSubmit } = useRecordModal({
+    isOpen,
+    editRecord,
+    onSave,
   })
-  const [errors, setErrors] = useState<Partial<Record>>({})
-
-  useEffect(() => {
-  const timer = setTimeout(() => {
-    if (editRecord) {
-      setForm({ ...editRecord })
-    } else {
-      setForm({ 
-        name: '', 
-        category: 'Security', 
-        description: '', 
-        status: 'Active', 
-        role: 'Viewer', 
-        email: '' 
-      })
-    }
-    setErrors({})
-  }, 0)
-  return () => clearTimeout(timer)
-}, [isOpen, editRecord])
-
-  function validate() {
-    const newErrors: Partial<Record> = {}
-    if (!form.name.trim()) newErrors.name = 'Asset name is required'
-    if (!form.email.trim()) newErrors.email = 'Email is required'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) newErrors.email = 'Enter a valid email address'
-    if (!form.description.trim()) newErrors.description = 'Description is required'
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  function handleSubmit() {
-    if (validate()) onSave(form)
-  }
 
   if (!isOpen) return null
 
@@ -200,22 +49,22 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
     <Overlay>
       <Modal>
         <ModalHeader>
-          <ModalTitle>{editRecord ? 'Edit asset' : 'Add new asset'}</ModalTitle>
-          <CloseButton onClick={onClose}>✕</CloseButton>
+          <ModalTitle>{editRecord ? MODAL_TITLE_EDIT : MODAL_TITLE_ADD}</ModalTitle>
+          <CloseButton onClick={onClose}>{CLOSE_ICON}</CloseButton>
         </ModalHeader>
         <Grid>
           <FormGroup>
-            <Label>Asset name *</Label>
+            <Label>{FIELD_LABEL_NAME}</Label>
             <Input
               $error={!!errors.name}
               value={form.name}
               onChange={e => setForm({ ...form, name: e.target.value })}
-              placeholder="e.g. Asset #1004"
+              placeholder={PLACEHOLDER_NAME}
             />
             {errors.name && <ErrorText>{errors.name}</ErrorText>}
           </FormGroup>
           <FormGroup>
-            <Label>Category *</Label>
+            <Label>{FIELD_LABEL_CATEGORY}</Label>
             <Select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
               <option>Security</option>
               <option>Compliance</option>
@@ -224,19 +73,19 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
           </FormGroup>
         </Grid>
         <FormGroup>
-          <Label>Description *</Label>
+          <Label>{FIELD_LABEL_DESCRIPTION}</Label>
           <Textarea
             $error={!!errors.description}
             rows={2}
             value={form.description}
             onChange={e => setForm({ ...form, description: e.target.value })}
-            placeholder="Brief description..."
+            placeholder={PLACEHOLDER_DESCRIPTION}
           />
           {errors.description && <ErrorText>{errors.description}</ErrorText>}
         </FormGroup>
         <Grid>
           <FormGroup>
-            <Label>Status *</Label>
+            <Label>{FIELD_LABEL_STATUS}</Label>
             <Select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
               <option>Active</option>
               <option>Pending</option>
@@ -244,7 +93,7 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
             </Select>
           </FormGroup>
           <FormGroup>
-            <Label>Assigned role</Label>
+            <Label>{FIELD_LABEL_ROLE}</Label>
             <Select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
               <option>Admin</option>
               <option>Manager</option>
@@ -253,19 +102,19 @@ export default function RecordModal({ isOpen, onClose, onSave, editRecord }: Pro
           </FormGroup>
         </Grid>
         <FormGroup>
-          <Label>Email *</Label>
+          <Label>{FIELD_LABEL_EMAIL}</Label>
           <Input
             $error={!!errors.email}
             type="email"
             value={form.email}
             onChange={e => setForm({ ...form, email: e.target.value })}
-            placeholder="email@greenshield.com"
+            placeholder={PLACEHOLDER_EMAIL}
           />
           {errors.email && <ErrorText>{errors.email}</ErrorText>}
         </FormGroup>
         <Footer>
-          <CancelButton onClick={onClose}>Cancel</CancelButton>
-          <SaveButton onClick={handleSubmit}>Save asset</SaveButton>
+          <CancelButton onClick={onClose}>{BUTTON_CANCEL}</CancelButton>
+          <SaveButton onClick={handleSubmit}>{BUTTON_SAVE_ASSET}</SaveButton>
         </Footer>
       </Modal>
     </Overlay>
