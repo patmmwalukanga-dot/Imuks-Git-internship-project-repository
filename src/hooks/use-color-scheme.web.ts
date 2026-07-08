@@ -9,7 +9,6 @@ export function useColorScheme() {
   const colorScheme = useRNColorScheme();
 
   useEffect(() => {
-    // Only set state if component is still mounted
     setHasHydrated(true);
   }, []);
 

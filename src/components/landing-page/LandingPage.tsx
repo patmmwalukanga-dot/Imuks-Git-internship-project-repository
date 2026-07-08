@@ -86,8 +86,7 @@ function HeroSection() {
 
       {/* Headline */}
       <Text style={styles.heroHeadline}>
-        Stay Ahead of{'
-'}the Curve
+        Stay Ahead of the Curve
       </Text>
 
       {/* Body */}
@@ -113,7 +112,7 @@ function HeroSection() {
       <View style={styles.heroImageWrapper}>
         <Image
           source={{
-            uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNVazjBf5XSqeK3VY0_NKHn7hHcZ2NN-mq7gKMQZDZgx_nBtZR0kSVYKAEsBGzRSGtEykQXiUPjMKsG2CDmP01Q9UgA0Mtek7OvDoxlp-l7MaYPvpr0Wf4oZuagp7',
+            uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCNVazjBf5XSqeK3VY0_NKHn7hHcZ2NN-mq7gKMQZDZgx_nBtZR0kSVYKAEsBGzRSGtEykQXiUPjMKsG2CDmP01Q9UgA0Mtek7OvDoxlp-l7MaYPvpr0Wf4oZuagp7[...]'
           }}
           style={styles.heroImage}
           resizeMode="cover"
@@ -219,7 +218,7 @@ function Footer() {
   );
 }
 
-// ─── Root screen ────────────────────────────────────────────────────────[...]
+// ─── Root screen ────────────────────────────────────────────────────────[.[...]
 
 export default function LandingPage() {
   return (
@@ -246,7 +245,7 @@ export default function LandingPage() {
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────[...]
+// ─── Styles ──────────────────────────────────────────────────────────[[...]
 
 const styles = StyleSheet.create({
   root: {
