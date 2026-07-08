@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+
 import { observer } from "mobx-react-lite";
 import { TaskStore } from "./store";
 import { fireConfetti } from "./confetti";
