@@ -3,9 +3,9 @@ import Link from 'next/link';
 import * as styles from './Footer.styles';
 import * as constants from './Footer.constants';
 import { useFooter } from './useFooter';
-import { FooterSectionProps } from './Footer.types';
 
-export default function FooterSection({}: FooterSectionProps) {
+
+export default function FooterSection() {
   const { currentYear } = useFooter();
 
   return (
