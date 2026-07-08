@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #fafaf4;
+  color: #1a1c19;
+  -webkit-font-smoothing: antialiased;
+  min-height: max(884px, 100dvh);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.hero-gradient {
+  background: linear-gradient(180deg, #01381e 0%, #00200f 100%);
+}
