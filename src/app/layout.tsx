@@ -4,6 +4,7 @@ import { Providers } from "./providers";
 import { createMetadata } from "@lib/seo";
 import "./globals.css";
 
+
 export const metadata: Metadata = createMetadata({
   title: "Next.js Project Template",
   description:
@@ -21,7 +22,6 @@ export default function RootLayout({
       <body>
         <NextTopLoader color="#2563eb" showSpinner={false} />
         <Providers>{children}</Providers>
-
       </body>
     </html>
   );
