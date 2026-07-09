@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SECRET_KEY!
-)
+// Fallback values prevent the Next.js production build from crashing in empty environments (like GitHub Actions)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder-project.supabase.co'
+const supabaseKey = process.env.SUPABASE_SECRET_KEY || 'placeholder-secret-key'
+
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 export async function GET() {
   const { data, error } = await supabase

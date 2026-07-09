@@ -14,5 +14,3 @@ export const PageSection = styled.section`
   margin: 0 auto;
   padding: 56px 0;
 `;
-
-
