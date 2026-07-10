@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -9,67 +8,19 @@ import TextField from "@mui/material/TextField";
 import { AppShell } from "@layouts/app-shell";
 import { AppButton } from "@components/ui/button";
 import { DueDate } from "../../components/datepicker/due_date";
-
-interface TaskItem {
-  id: number;
-  title: string;
-  dueDate: string;
-}
-
-const getTodayString = (): string => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const formatDisplayDate = (value: string) => {
-  const date = new Date(value);
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
+import { DUE_DATE_PICKER_COLORS } from "./constants";
+import { formatDisplayDate, useDueDatePicker } from "./hooks";
 
 function DueDatePickerWorkspace() {
-  const [title, setTitle] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const handleAddTask = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const todayString = getTodayString();
-
-    if (!title.trim()) {
-      setErrorMessage("Please enter a task title.");
-      return;
-    }
-
-    if (!dueDate) {
-      setErrorMessage("Please select a due date.");
-      return;
-    }
-
-    if (dueDate < todayString) {
-      setErrorMessage("Due date cannot be in the past.");
-      return;
-    }
-
-    setTasks((current) => [
-      ...current,
-      {
-        id: Date.now(),
-        title: title.trim(),
-        dueDate,
-      },
-    ]);
-
-    setTitle("");
-    setDueDate("");
-    setErrorMessage("");
-  };
+  const {
+    title,
+    setTitle,
+    dueDate,
+    setDueDate,
+    tasks,
+    errorMessage,
+    handleAddTask,
+  } = useDueDatePicker();
 
   return (
     <AppShell>
@@ -79,14 +30,14 @@ function DueDatePickerWorkspace() {
           elevation={0}
           sx={{
             border: "1px solid",
-            borderColor: "#01381e",
+            borderColor: DUE_DATE_PICKER_COLORS.primary,
             borderRadius: 2,
             p: 3,
-            backgroundColor: "#Dee2b115",
+            backgroundColor: DUE_DATE_PICKER_COLORS.panelBackground,
           }}
         >
           <Stack spacing={3}>
-            <Typography variant="h5" fontWeight={700} sx={{ color: "#01381e" }}>
+            <Typography variant="h5" fontWeight={700} sx={{ color: DUE_DATE_PICKER_COLORS.primary }}>
               Create Task
             </Typography>
             <Stack component="form" spacing={3} onSubmit={handleAddTask}>
@@ -97,10 +48,10 @@ function DueDatePickerWorkspace() {
                 fullWidth
                 sx={{
                   "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#01381e",
+                    borderColor: DUE_DATE_PICKER_COLORS.primary,
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "#01381e",
+                    color: DUE_DATE_PICKER_COLORS.primary,
                   },
                 }}
               />
@@ -116,8 +67,8 @@ function DueDatePickerWorkspace() {
               <AppButton 
                 type="submit"
                 sx={{
-                  backgroundColor: "#01381e",
-                  color: "#Dee2b1",
+                  backgroundColor: DUE_DATE_PICKER_COLORS.primary,
+                  color: DUE_DATE_PICKER_COLORS.accent,
                   "&:hover": {
                     backgroundColor: "#012a16",
                   }
@@ -140,7 +91,7 @@ function DueDatePickerWorkspace() {
           }}
         >
           <Stack spacing={2}>
-            <Typography variant="h5" fontWeight={700} sx={{ color: "#01381e" }}>
+            <Typography variant="h5" fontWeight={700} sx={{ color: DUE_DATE_PICKER_COLORS.primary }}>
               Task list
             </Typography>
             {tasks.length === 0 ? (
@@ -155,10 +106,10 @@ function DueDatePickerWorkspace() {
                     elevation={0}
                     sx={{
                       border: "1px solid",
-                      borderColor: "#Dee2b1",
+                      borderColor: DUE_DATE_PICKER_COLORS.accent,
                       borderRadius: 2,
                       p: 2,
-                      backgroundColor: "#Dee2b130",
+                      backgroundColor: DUE_DATE_PICKER_COLORS.taskCardBackground,
                     }}
                   >
                     <Stack
@@ -167,7 +118,7 @@ function DueDatePickerWorkspace() {
                       alignItems={{ xs: "flex-start", sm: "center" }}
                       spacing={2}
                     >
-                      <Typography fontWeight={700} sx={{ color: "#01381e" }}>
+                      <Typography fontWeight={700} sx={{ color: DUE_DATE_PICKER_COLORS.primary }}>
                         {task.title}
                       </Typography>
                       <Typography color="text.secondary" variant="body2" fontWeight={500}>
