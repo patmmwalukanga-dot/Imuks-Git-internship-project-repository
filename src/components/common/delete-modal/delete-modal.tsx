@@ -1,4 +1,10 @@
-import { Overlay, ModalContainer, Actions } from './delete-modal.styles'
+import {
+  Overlay,
+  ModalContainer,
+  Actions,
+  CancelButton,
+  DeleteButton,
+} from './delete-modal.styles'
 import { DeleteModalProps } from './types'
 
 export default function DeleteModal({
@@ -11,21 +17,27 @@ export default function DeleteModal({
   if (!isOpen) return null
 
   return (
-  <Overlay>
-    <ModalContainer
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-    >
-      <h2 id="modal-title">{title}</h2>
+    <Overlay>
+      <ModalContainer
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <h2 id="modal-title">{title}</h2>
 
-      <p>{description}</p>
+        <p>{description}</p>
 
-      <Actions>
-        <button onClick={onCancel}>Cancel</button>
-        <button onClick={onConfirm}>Delete</button>
-      </Actions>
-    </ModalContainer>
-  </Overlay>
-)
+        <Actions>
+          <CancelButton onClick={onCancel}>
+            Cancel
+          </CancelButton>
+
+          <DeleteButton onClick={onConfirm}>
+            Delete
+          </DeleteButton>
+        </Actions>
+      </ModalContainer>
+    </Overlay>
+  )
 }
+  
