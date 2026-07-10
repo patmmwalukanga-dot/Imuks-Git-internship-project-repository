@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import Sidebar from './sidebar'
 import RecordsTable from './records-table'
 import RecordModal from './record-modal'
+import DeleteModal from '@/components/common/delete-modal'
 
 type Record = {
   id: string
@@ -130,6 +131,8 @@ export default function DataManagementPage() {
   const [editRecord, setEditRecord] = useState<Record | null>(null)
   const [userRole, setUserRole] = useState('Admin')
   const [loading, setLoading] = useState(true)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+const [recordToDelete, setRecordToDelete] = useState<string | null>(null)
   const filtered = useMemo(() => {
   const q = search.toLowerCase()
   return records.filter(r =>
@@ -170,15 +173,35 @@ export default function DataManagementPage() {
     fetchRecords()
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this asset?')) return
-    await fetch('/api/records', {
+function handleDelete(id: string) {
+  setRecordToDelete(id)
+  setIsDeleteModalOpen(true)
+}
+
+async function confirmDelete() {
+  if (!recordToDelete) return
+
+  try {
+    const response = await fetch('/api/records', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
+      body: JSON.stringify({ id: recordToDelete })
     })
+
+    if (!response.ok) {
+      throw new Error('Failed to delete record')
+    }
+
+    setIsDeleteModalOpen(false)
+    setRecordToDelete(null)
+
     fetchRecords()
+
+  } catch (error) {
+    console.error('Delete failed:', error)
+    alert('Unable to delete record. Please try again.')
   }
+}
 
   function handleEdit(record: Record) {
     setEditRecord(record)
@@ -247,6 +270,14 @@ export default function DataManagementPage() {
         onSave={handleSave}
         editRecord={editRecord}
       />
+      <DeleteModal
+  isOpen={isDeleteModalOpen}
+  onCancel={() => {
+    setIsDeleteModalOpen(false)
+    setRecordToDelete(null)
+  }}
+  onConfirm={confirmDelete}
+/>
     </Layout>
   )
 }
