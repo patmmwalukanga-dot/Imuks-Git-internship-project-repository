@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import DeleteModal from '@/components/common/delete-modal'
 import styled from 'styled-components'
 import Sidebar from './sidebar'
 import RecordsTable from './records-table'
@@ -130,17 +131,22 @@ export default function DataManagementPage() {
   const [editRecord, setEditRecord] = useState<Record | null>(null)
   const [userRole, setUserRole] = useState('Admin')
   const [loading, setLoading] = useState(true)
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [recordToDelete, setRecordToDelete] = useState<string | null>(null)
+
   const filtered = useMemo(() => {
-  const q = search.toLowerCase()
-  return records.filter(r =>
-    r.name.toLowerCase().includes(q) ||
-    r.category.toLowerCase().includes(q)
-  )
-}, [search, records])
+    const q = search.toLowerCase()
+
+    return records.filter(r =>
+      r.name.toLowerCase().includes(q) ||
+      r.category.toLowerCase().includes(q)
+    )
+  }, [search, records])
 
   useEffect(() => {
     fetchRecords()
-}, [])
+  }, [])
 
   async function fetchRecords() {
     setLoading(true)
@@ -170,13 +176,21 @@ export default function DataManagementPage() {
     fetchRecords()
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Are you sure you want to delete this asset?')) return
+  function handleDelete(id: string) {
+    setRecordToDelete(id)
+    setIsDeleteModalOpen(true)
+  }
+  async function confirmDelete() {
+    if (!recordToDelete) return
+
     await fetch('/api/records', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
+      body: JSON.stringify({ id: recordToDelete })
     })
+
+    setIsDeleteModalOpen(false)
+    setRecordToDelete(null)
     fetchRecords()
   }
 
@@ -246,6 +260,14 @@ export default function DataManagementPage() {
         onClose={() => { setIsModalOpen(false); setEditRecord(null) }}
         onSave={handleSave}
         editRecord={editRecord}
+      />
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onCancel={() => {
+          setIsDeleteModalOpen(false)
+          setRecordToDelete(null)
+        }}
+        onConfirm={confirmDelete}
       />
     </Layout>
   )
