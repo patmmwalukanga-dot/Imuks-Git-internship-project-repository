@@ -189,7 +189,8 @@ export default function AttendancePage() {
                     <S.EmptyRow>No employees match your search.</S.EmptyRow>
                   )}
                   {paginatedRecords.map((record) => {
-                    const employee = DEFAULT_EMPLOYEES.find((item) => item.id === record.employeeId)!;
+                    const employee = DEFAULT_EMPLOYEES.find((item) => item.id === record.employeeId);
+                    if (!employee) return null;
                     return (
                       <S.TableRow key={record.employeeId} $dark={darkMode}>
                         <S.EmployeeCell>

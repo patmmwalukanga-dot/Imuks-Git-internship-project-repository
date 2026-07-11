@@ -475,7 +475,7 @@ export const StatusButtons = styled.div`
 `;
 
 export const StatusButton = styled.button<{
-  $status: "present" | "absent" | "late";
+  $status: AttendanceStatus;
   $active: boolean;
   $dark: boolean;
 }>`

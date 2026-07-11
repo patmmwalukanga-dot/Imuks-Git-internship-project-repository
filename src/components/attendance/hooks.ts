@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import type {
   AttendanceRecord,
   AttendanceStatus,
@@ -90,7 +90,7 @@ export function getEmployeeInitials(name: string): string {
 }
 
 export function getAvatarColorIndex(name: string, paletteLength: number): number {
-  return name.charCodeAt(0) % paletteLength;
+  return (name?.charCodeAt(0) || 0) % paletteLength;
 }
 
 export function filterRecordsBySearch(
@@ -145,7 +145,19 @@ export function exportRollCallCSV(rollCall: DailyRollCall): void {
     ]);
   });
 
-  const csv = rows.map((row) => row.join(",")).join("\n");
+  const csv = rows
+    .map((row) =>
+      row
+        .map((cell) => {
+          const str = String(cell ?? "");
+          if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+            return `"${str.replace(/"/g, '""')}"`;
+          }
+          return str;
+        })
+        .join(",")
+    )
+    .join("\n");
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
@@ -158,7 +170,7 @@ export function exportRollCallCSV(rollCall: DailyRollCall): void {
 export function useAttendancePage() {
   const [tab, setTab] = useState<AttendanceTab>("mark");
   const [selectedDate, setSelectedDate] = useState(todayISO());
-  const [rollCall, setRollCall] = useState<DailyRollCall | null>(null);
+  const [rollCall, setRollCall] = useState<DailyRollCall>(() => getOrCreateRollCall(todayISO()));
   const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -176,15 +188,12 @@ export function useAttendancePage() {
     setPage(1);
   }, [selectedDate]);
 
- useEffect(() => {
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reload roll call when date changes
-  loadRollCall();
-}, [loadRollCall]);
-
-useEffect(() => {
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: reload history when tab changes
-  setHistory(loadAllRecords());
-}, [tab]);
+  const handleTabChange = useCallback((newTab: AttendanceTab) => {
+    setTab(newTab);
+    if (newTab === "history") {
+      setHistory(loadAllRecords());
+    }
+  }, []);
 
   const updateStatus = useCallback(
     (employeeId: string, status: AttendanceStatus) => {
@@ -256,6 +265,8 @@ useEffect(() => {
 
   const handleDateChange = useCallback((value: string) => {
     setSelectedDate(value);
+    setRollCall(getOrCreateRollCall(value));
+    setPage(1);
   }, []);
 
   const toggleDarkMode = useCallback(() => {
@@ -305,7 +316,7 @@ useEffect(() => {
 
   return {
     tab,
-    setTab,
+    setTab: handleTabChange,
     selectedDate,
     rollCall,
     search,
