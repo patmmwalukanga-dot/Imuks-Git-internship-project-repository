@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { makePersistable } from "mobx-persist-store";
+import { DEFAULT_TASKS, TASK_STORE_NAME } from "./constants";
 
 export interface Task {
   id: string;
@@ -9,39 +10,19 @@ export interface Task {
 }
 
 export class TaskStore {
-  tasks: Task[] = [
-    {
-      id: "1",
-      title: "Set up project repo",
-      description: "Initialize the repository, install dependencies, and configure linting.",
-      completed: false,
-    },
-    {
-      id: "2",
-      title: "Build task list UI",
-      description: "Create the task card layout with checkbox, title, and description.",
-      completed: false,
-    },
-    {
-      id: "3",
-      title: "Connect to API",
-      description: "Wire up the task list to fetch and persist data from the backend.",
-      completed: false,
-    },
-  ];
+  tasks: Task[] = DEFAULT_TASKS.map((t) => ({ ...t }));
 
   constructor() {
     makeAutoObservable(this);
 
     makePersistable(this, {
-      name: "TaskStore",
+      name: TASK_STORE_NAME,
       properties: ["tasks"],
       storage:
         typeof window !== "undefined" ? window.localStorage : undefined,
     });
   }
 
-  // Completed tasks always sort to the bottom; relative order is preserved.
   get sortedTasks() {
     return [...this.tasks].sort((a, b) => {
       if (a.completed === b.completed) return 0;
