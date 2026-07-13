@@ -126,7 +126,7 @@ export default function LoginForm() {
 
         Don't have an account?{" "}
 
-        <a
+        <Link
           href="#"
           className="font-semibold text-blue-600 hover:underline"
         >
