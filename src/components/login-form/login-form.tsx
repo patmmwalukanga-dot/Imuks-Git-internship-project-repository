@@ -131,7 +131,7 @@ export default function LoginForm() {
           className="font-semibold text-blue-600 hover:underline"
         >
           Create one
-        </a>
+        </Link>
 
       </p>
 
